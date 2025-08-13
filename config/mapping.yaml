@@ -1,0 +1,45 @@
+# Cost Center Mapping Configuration
+# Maps employee names to cost centers and departments
+
+cost_centers:
+  # Example mappings - replace with actual employee data
+  "John Doe":
+    cost_center: "CC001"
+    department: "IT"
+    phone: "123 45 678"
+    
+  "Jane Smith":
+    cost_center: "CC002"
+    department: "Finance"
+    phone: "234 56 789"
+    
+  "Ole Hansen":
+    cost_center: "CC003"
+    department: "Sales"
+    phone: "345 67 890"
+
+departments:
+  IT:
+    description: "Information Technology"
+    manager: "IT Manager"
+    
+  Finance:
+    description: "Finance and Accounting"
+    manager: "Finance Manager"
+    
+  Sales:
+    description: "Sales and Marketing"
+    manager: "Sales Manager"
+
+# Default mappings for unknown employees
+defaults:
+  unknown_employee:
+    cost_center: "UNKNOWN"
+    department: "Unassigned"
+    confidence_threshold: 0.8
+
+# Validation rules
+validation:
+  min_confidence: 0.8
+  fuzzy_match_threshold: 0.85
+  require_exact_phone_match: false

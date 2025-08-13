@@ -1,0 +1,76 @@
+# Telia Invoice Template Configuration
+# This file defines the structure and patterns for extracting data from Telia invoices
+
+telia_invoice:
+  name: "Telia Invoice Template"
+  version: "1.0"
+  description: "Template for processing Telia Norge AS invoices"
+  
+  sections:
+    header:
+      patterns:
+        - "Telia Norge AS"
+        - "Fakturanummer:"
+        - "Fakturadato:"
+      required: true
+      confidence_threshold: 0.8
+    
+    service_specification:
+      patterns:
+        - "Tjenestespesifikasjon for"
+        - "Tjenestespesifikasjon for (fortsettelse)"
+      required: true
+      confidence_threshold: 0.7
+      
+      fields:
+        employee_name:
+          pattern: r'([A-ZÆØÅ][a-zæøå\s]+)\s*[-–—]\s*(\d{3}\s*\d{2}\s*\d{3})'
+          validation:
+            - name_format
+            - phone_format
+          confidence_threshold: 0.8
+          
+        phone_number:
+          pattern: r'(\d{3}\s*\d{2}\s*\d{3})'
+          validation:
+            - phone_format
+          confidence_threshold: 0.9
+          
+        costs:
+          pattern: r'(\d+[,.]?\d*)\s*$'
+          validation:
+            - numeric
+            - positive_value
+          confidence_threshold: 0.95
+    
+    summary:
+      patterns:
+        - "Å betale"
+        - "Total"
+      required: true
+      confidence_threshold: 0.8
+      
+      fields:
+        total_amount:
+          pattern: r'(\d+[,.]?\d*)'
+          validation:
+            - numeric
+            - positive_value
+          confidence_threshold: 0.95
+
+  validation_rules:
+    name_format:
+      description: "Norwegian name format validation"
+      pattern: r'^[A-ZÆØÅ][a-zæøå\s]+$'
+      
+    phone_format:
+      description: "Norwegian phone number format"
+      pattern: r'^\d{3}\s*\d{2}\s*\d{3}$'
+      
+    numeric:
+      description: "Numeric value validation"
+      pattern: r'^\d+[,.]?\d*$'
+      
+    positive_value:
+      description: "Positive value validation"
+      min_value: 0.01
