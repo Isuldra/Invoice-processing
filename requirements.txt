@@ -1,29 +1,27 @@
-# Core OCR and Image Processing
-opencv-python>=4.8.0
-Pillow>=10.0.0
-pytesseract>=0.3.10
-easyocr>=1.7.0
-pdf2image>=1.16.0
+# Core dependencies for text-based invoice processing
+pypdf>=3.0.0  # Modern PyPDF2 replacement
+pdfplumber>=0.9.0  # Robust PDF extraction with fallback
+pandas>=1.5.0
+numpy>=1.21.0
 
-# Data Processing
-pandas>=2.0.0
-numpy>=1.24.0
-openpyxl>=3.1.0
-
-# User Interface
-tkinter-tooltip>=2.1.0
-
-# Testing and Development
-pytest>=7.4.0
-pytest-cov>=4.1.0
-black>=23.9.0
-flake8>=6.1.0
-
-# Utilities
-PyYAML>=6.0.0
+# Configuration and data handling
+PyYAML>=6.0
 python-dateutil>=2.8.0
-fuzzywuzzy>=0.18.0
-python-Levenshtein>=0.21.0
 
-# Packaging
-pyinstaller>=6.1.0
+# User interface (optional)
+tkinter  # Usually included with Python
+
+# Development and testing
+pytest>=7.0.0
+pytest-cov>=4.0.0
+
+# Code quality
+black>=22.0.0
+flake8>=5.0.0
+mypy>=1.0.0
+
+# Packaging (for creating EXE)
+pyinstaller>=5.0.0
+
+# Note: OCR dependencies (tesseract, easyocr, opencv) have been removed
+# since we now use text-based processing instead of image-based OCR
