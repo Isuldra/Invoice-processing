@@ -57,7 +57,7 @@ class CostBearerMatch:
     kostsenter: Optional[int] = None
     telefonnummer: str = ""
     sum_denne_periode: float = 0.0
-    match_status: str = "UNMATCHED_COST_BEARER"  # MATCHED|UNMATCHED_COST_BEARER|MULTIPLE_MATCHES
+    match_status: str = "KREVER_MANUELL_KONTERING"  # MATCHED|KREVER_MANUELL_KONTERING|FLERE_MULIGE_TREFF
     confidence_score: float = 0.0
     deviation_reason: str = ""
 
@@ -117,7 +117,7 @@ class CostBearerMatcher:
         """
         Match employee name against cost bearers with Norwegian business rules.
         
-        Returns UNMATCHED_COST_BEARER for names not in Excel per user requirements.
+        Returns KREVER_MANUELL_KONTERING for names not in Excel per user requirements.
         """
         self.logger.debug(f"Matching employee name: '{employee_name}'")
         
