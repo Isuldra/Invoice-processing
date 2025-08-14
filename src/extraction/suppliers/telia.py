@@ -149,25 +149,25 @@ class CostBearerMatcher:
         # Handle matching results according to cursor rules
         if len(matches_found) == 0:
             # No matches found - generate deviation per user requirement
-            result.match_status = "UNMATCHED_COST_BEARER"
-            result.deviation_reason = f"Employee '{employee_name}' not found in cost bearer Excel file"
-            self.logger.warning(f"🚨 DEVIATION: {result.deviation_reason}")
+            result.match_status = "KREVER_MANUELL_KONTERING"
+            result.deviation_reason = f"Ansatt '{employee_name}' ikke funnet i kostnadsbærer-registeret"
+            self.logger.warning(f"🚨 KONTERINGSAVVIK: {result.deviation_reason}")
             
         elif len(matches_found) == 1:
             # Single match found
-            result.match_status = "MATCHED"
+            result.match_status = "KONTERT"
             result.matched_fornavn = best_match.fornavn
             result.matched_etternavn = best_match.etternavn
             result.kostsenter = best_match.kostsenter
             result.confidence_score = best_score
-            self.logger.info(f"✅ Matched '{employee_name}' → {best_match.full_name} (kostsenter: {best_match.kostsenter})")
+            self.logger.info(f"✅ Kontert '{employee_name}' → {best_match.full_name} (kostsenter: {best_match.kostsenter})")
             
         else:
             # Multiple matches found - requires manual review per cursor rules
-            result.match_status = "MULTIPLE_MATCHES"
-            result.deviation_reason = f"Multiple potential matches found for '{employee_name}'"
+            result.match_status = "FLERE_MULIGE_TREFF"
+            result.deviation_reason = f"Flere mulige konteringsalternativer funnet for '{employee_name}'"
             result.confidence_score = best_score
-            self.logger.warning(f"🚨 MULTIPLE MATCHES: {result.deviation_reason}")
+            self.logger.warning(f"🚨 KONTERINGS-TVETYDIGHET: {result.deviation_reason}")
         
         return result
 
@@ -262,7 +262,7 @@ class TeliaParser(BaseSupplierParser):
             cost_bearer_matches.append(match_result)
             
             # Track matching statistics
-            if match_result.match_status == "MATCHED":
+            if match_result.match_status == "KONTERT":
                 total_matched_amount += line.amount
             else:
                 unmatched_count += 1
@@ -321,7 +321,7 @@ class TeliaParser(BaseSupplierParser):
             ],
             "kvalitetskontroll": {
                 "totalbeløp_stemmer": abs(invoice_data.grand_total - sum(line.amount for line in invoice_data.lines)) < 0.01,
-                "kostnadsbarer_stemmer": abs(total_matched_amount - sum(line.amount for line in invoice_data.lines if any(m.match_status == "MATCHED" and m.navn_fra_faktura == line.employee_name for m in cost_bearer_matches))) < 0.01,
+                "kostnadsbarer_stemmer": abs(total_matched_amount - sum(line.amount for line in invoice_data.lines if any(m.match_status == "KONTERT" and m.navn_fra_faktura == line.employee_name for m in cost_bearer_matches))) < 0.01,
                 "unmatched_count": unmatched_count,
                 "processing_confidence": invoice_data.confidence,
                 "requires_manual_review": unmatched_count > 0,
@@ -332,9 +332,9 @@ class TeliaParser(BaseSupplierParser):
         # Add validation errors if needed
         validation_errors = []
         if unmatched_count > 0:
-            validation_errors.append(f"{unmatched_count} employees could not be matched to cost bearers")
+            validation_errors.append(f"{unmatched_count} ansatte kunne ikke konteres automatisk")
         if abs(invoice_data.grand_total - sum(line.amount for line in invoice_data.lines)) > 0.01:
-            validation_errors.append("Total amount does not match sum of lines")
+            validation_errors.append("Totalbeløp stemmer ikke med sum av linjer")
         
         structured_output["kvalitetskontroll"]["validation_errors"] = validation_errors
         
