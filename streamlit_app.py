@@ -19,8 +19,7 @@ sys.path.append('src')
 
 # Configure page
 st.set_page_config(
-    page_title="🏥 OneMed Fakturabehandling", 
-    page_icon="🏥",
+    page_title="OneMed Fakturabehandling", 
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -384,13 +383,12 @@ def main():
     
     # Sidebar with theme toggle and controls
     with st.sidebar:
-        st.markdown("### ⚙️ OneMed Innstillinger")
+        st.markdown("### OneMed Innstillinger")
         
         # Theme toggle
-        theme_emoji = "🌙" if st.session_state.dark_mode else "☀️"
         theme_text = "Bytt til lys modus" if st.session_state.dark_mode else "Bytt til mørk modus"
         
-        if st.button(f"{theme_emoji} {theme_text}", key="theme_toggle", use_container_width=True):
+        if st.button(theme_text, key="theme_toggle", use_container_width=True):
             st.session_state.dark_mode = not st.session_state.dark_mode
             st.rerun()
         
@@ -399,7 +397,7 @@ def main():
         # OneMed branding info
         st.markdown("""
         <div class="onemed-container">
-            <h4 class="text-primary">🏥 OneMed</h4>
+            <h4 class="text-primary">OneMed</h4>
             <p class="text-secondary" style="font-size: 0.9rem;">
                 Profesjonell fakturabehandling for helseteknologi
             </p>
@@ -410,7 +408,7 @@ def main():
         """, unsafe_allow_html=True)
         
         # System info
-        with st.expander("📊 Systeminfo"):
+        with st.expander("Systeminfo"):
             current_theme = "Mørk modus" if st.session_state.dark_mode else "Lys modus"
             st.write(f"**Tema:** {current_theme}")
             st.write(f"**Versjon:** 1.0")
@@ -418,19 +416,19 @@ def main():
             
             parser = get_parser()
             if parser:
-                st.write("**Status:** ✅ Full funksjonalitet")
+                st.write("**Status:** Full funksjonalitet")
             else:
-                st.write("**Status:** ⚠️ Begrenset modus")
+                st.write("**Status:** Begrenset modus")
     
-    # SLEEK OneMed Header with Corporate Branding
+    # Professional OneMed Header
     st.markdown("""
     <div class="onemed-header">
         <div class="onemed-logo">
-            <div class="onemed-logo-icon">🏥</div>
+            <div class="onemed-logo-icon">OM</div>
             <div>
                 <h1>OneMed Fakturabehandling</h1>
                 <p style="color: rgba(255,255,255,0.85); margin: 0; font-size: 1.2rem; font-weight: 300; letter-spacing: 0.02em;">
-                    Enterprise fakturaløsning med automatisk kontering og norsk finansterminologi
+                    Automatisk kostnadsallokering og finansrapportering for Telia Norge AS fakturaer
                 </p>
             </div>
         </div>
@@ -438,27 +436,27 @@ def main():
     """, unsafe_allow_html=True)
     
     # Instructions
-    with st.expander("📋 Slik bruker du OneMed Fakturabehandling", expanded=True):
+    with st.expander("Slik bruker du OneMed Fakturabehandling", expanded=True):
         st.markdown("""
         <div class="onemed-container">
             <ol style="font-size: 1rem; line-height: 1.8;">
-                <li><span class="text-primary">📄 <strong>Last opp</strong></span> en Telia Norge AS faktura (PDF-format)</li>
-                <li><span class="text-secondary">📊 <strong>Last opp</strong></span> kostnadsbærer-fil (Excel) - valgfritt</li>
-                <li><span class="text-success">🔄 <strong>Klikk</strong></span> "Behandle Faktura" for automatisk kontering</li>
-                <li><span class="text-warning">📊 <strong>Gjennomgå</strong></span> resultater og håndter eventuelle konteringsavvik</li>
+                <li><span class="text-primary"><strong>Last opp</strong></span> en Telia Norge AS faktura (PDF-format)</li>
+                <li><span class="text-secondary"><strong>Last opp</strong></span> kostnadsbærer-fil (Excel) - valgfritt</li>
+                <li><span class="text-success"><strong>Klikk</strong></span> "Behandle Faktura" for automatisk kostnadsallokering</li>
+                <li><span class="text-warning"><strong>Gjennomgå</strong></span> resultater og generer finansrapport</li>
             </ol>
-            <div style="margin-top: 1rem; padding: 1rem; background-color: rgba(37, 99, 235, 0.1); border-radius: 8px;">
-                <h5 class="text-primary">🇳🇴 Norsk Finansterminologi:</h5>
+            <div style="margin-top: 1rem; padding: 1rem; background-color: rgba(73, 120, 134, 0.1); border-radius: 8px;">
+                <h5 class="text-primary">Norsk Finansterminologi:</h5>
                 <ul style="font-size: 0.9rem;">
-                    <li><strong>KONTERT</strong> - Ansatt funnet og automatisk allokert til kostsenter</li>
-                    <li><strong>KREVER_MANUELL_KONTERING</strong> - Avvik som trenger manuell behandling</li>
-                    <li><strong>FLERE_MULIGE_TREFF</strong> - Tvetydige navn som krever avklaring</li>
+                    <li><strong>ALLOKERT</strong> - Kostnad automatisk tildelt riktig kostsenter</li>
+                    <li><strong>KREVER_MANUELL_BEHANDLING</strong> - Kostnad som trenger manuell vurdering</li>
+                    <li><strong>FLERE_MULIGE_KOSTSENTRE</strong> - Tvetydige ansattnavn som krever avklaring</li>
                 </ul>
             </div>
         </div>
         """, unsafe_allow_html=True)
     
-    st.markdown("### 📁 Filopplasting")
+    st.markdown("### Filopplasting")
     
     # File uploads
     col1, col2 = st.columns(2)
@@ -466,7 +464,7 @@ def main():
     with col1:
         st.markdown("""
         <div class="onemed-container">
-            <h4 class="text-primary">📄 Telia Faktura (PDF)</h4>
+            <h4 class="text-primary">Telia Faktura (PDF)</h4>
             <p class="text-secondary">Påkrevd - Telia Norge AS fakturaer</p>
         </div>
         """, unsafe_allow_html=True)
@@ -479,12 +477,12 @@ def main():
         )
         
         if pdf_file:
-            st.success(f"✅ PDF lastet opp: {pdf_file.name} ({pdf_file.size/1024:.1f} KB)")
+            st.success(f"PDF lastet opp: {pdf_file.name} ({pdf_file.size/1024:.1f} KB)")
     
     with col2:
         st.markdown("""
         <div class="onemed-container">
-            <h4 class="text-secondary">📊 Kostnadsbærere (Excel)</h4>
+            <h4 class="text-secondary">Kostnadsbærere (Excel)</h4>
             <p class="text-secondary">Valgfritt - bruker mock-data hvis tom</p>
         </div>
         """, unsafe_allow_html=True)
@@ -497,26 +495,26 @@ def main():
         )
         
         if excel_file:
-            st.success(f"✅ Excel lastet opp: {excel_file.name} ({excel_file.size/1024:.1f} KB)")
+            st.success(f"Excel lastet opp: {excel_file.name} ({excel_file.size/1024:.1f} KB)")
         else:
-            st.info("ℹ️ Bruker OneMed mock kostnadsbærer-data")
+            st.info("Bruker OneMed mock kostnadsbærer-data")
     
     # Process button
     st.markdown("---")
     col_center = st.columns([1, 2, 1])[1]
     with col_center:
         if pdf_file:
-            if st.button("🔄 Behandle Faktura", type="primary", use_container_width=True):
+            if st.button("Behandle Faktura", type="primary", use_container_width=True):
                 process_invoice(pdf_file, excel_file)
         else:
-            st.button("📄 Last opp PDF-fil først", disabled=True, use_container_width=True)
+            st.button("Last opp PDF-fil først", disabled=True, use_container_width=True)
 
 def process_invoice(pdf_file, excel_file):
-    """Process the uploaded invoice with OneMed styling"""
+    """Process the uploaded invoice with professional OneMed analysis"""
     
     parser = get_parser()
     
-    with st.spinner("⏳ Behandler faktura med OneMed Fakturabehandling..."):
+    with st.spinner("Behandler faktura med OneMed Fakturabehandling..."):
         try:
             # Save PDF to temporary file
             with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as tmp_file:
@@ -541,67 +539,67 @@ def process_invoice(pdf_file, excel_file):
             os.unlink(pdf_path)
             
             if not pdf_content:
-                st.error("❌ Kunne ikke lese tekst fra PDF-filen")
+                st.error("Kunne ikke lese tekst fra PDF-filen")
                 return
             
             # Check if it's a Telia invoice (basic check)
             if "Telia" not in pdf_content and "telia" not in pdf_content.lower():
-                st.error("❌ Dette ser ikke ut til å være en Telia Norge AS faktura")
+                st.error("Dette ser ikke ut til å være en Telia Norge AS faktura")
                 return
             
             # ADVANCED DEBUG: Show what's happening with the PDF
-            with st.expander("🔍 OneMed DEBUG - Se hva som skjer med PDF-en", expanded=False):
-                st.markdown("### 📊 PDF Analyse")
+            with st.expander("OneMed DEBUG - Se hva som skjer med PDF-en", expanded=False):
+                st.markdown("### PDF Analyse")
                 col1, col2 = st.columns(2)
                 
                 with col1:
                     st.metric("PDF Tekst lengde", f"{len(pdf_content):,} tegn")
                     contains_telia = "Telia" in pdf_content or "telia" in pdf_content.lower()
-                    st.metric("Inneholder 'Telia'", "✅ JA" if contains_telia else "❌ NEI")
+                    st.metric("Inneholder 'Telia'", "JA" if contains_telia else "NEI")
                 
                 with col2:
                     parser_available = parser is not None
-                    st.metric("TeliaParser tilgjengelig", "✅ JA" if parser_available else "❌ NEI")
+                    st.metric("TeliaParser tilgjengelig", "JA" if parser_available else "NEI")
                     if parser_available:
                         can_parse = parser.can_parse(pdf_content)
-                        st.metric("kan_parse()", "✅ JA" if can_parse else "❌ NEI")
+                        st.metric("kan_parse()", "JA" if can_parse else "NEI")
                     
                 if parser_available:
-                    st.markdown("### 🎯 Pattern Matching Test")
+                    st.markdown("### Pattern Matching Test")
                     patterns = parser.get_identification_patterns()
                     import re
                     matches = 0
                     for i, pattern in enumerate(patterns, 1):
                         found = re.search(pattern, pdf_content, re.IGNORECASE)
-                        status = "✅" if found else "❌"
+                        status = "FUNNET" if found else "IKKE FUNNET"
                         st.write(f"{i}. `{pattern}` → {status}")
                         if found:
                             matches += 1
                     st.write(f"**Totalt: {matches}/5 patterns funnet** (trenger 3+ for parsing)")
                 
-                st.markdown("### 📄 PDF Tekst Sample")
+                st.markdown("### PDF Tekst Sample")
                 st.text_area("Første 500 tegn fra PDF:", pdf_content[:500], height=200)
 
             # Process with parser or create mock data
             if parser and parser.can_parse(pdf_content):
-                st.success("✅ OneMed TeliaParser kan parse denne PDF-en!")
+                st.success("OneMed TeliaParser kan parse denne PDF-en!")
                 result = parser.parse_invoice_with_cost_bearers(pdf_content)
                 display_results(result, is_full_parser=True)
             else:
                 if parser:
-                    st.warning("⚠️ PDF-en passerte ikke TeliaParser validering - bruker demo-data")
+                    st.warning("PDF-en passerte ikke TeliaParser validering - bruker demo-data")
                     if not parser.can_parse(pdf_content):
-                        st.error("📝 **Årsak**: Mindre enn 3 av 5 identifikasjonsmønstre ble funnet")
-                        st.info("💡 **Tips**: Sjekk at PDF-en inneholder 'Fakturanummer:', 'Telia Norge AS', og 'SUM DENNE PERIODE'")
+                        st.error("**Årsak**: Mindre enn 3 av 5 identifikasjonsmønstre ble funnet")
+                        st.info("**Tips**: Sjekk at PDF-en inneholder 'Fakturanummer:', 'Telia Norge AS', og 'SUM DENNE PERIODE'")
                 else:
-                    st.warning("⚠️ TeliaParser ikke tilgjengelig - bruker demo-data")
+                    st.warning("TeliaParser ikke tilgjengelig - bruker demo-data")
                 
                 # Create mock processing results for demo
                 mock_result = create_mock_result(pdf_content, pdf_file.name)
                 display_results(mock_result, is_full_parser=False)
                 
         except Exception as e:
-            st.error(f"❌ Feil ved behandling av faktura: {str(e)}")
+            st.error(f"Feil ved behandling av faktura: {str(e)}")
 
 def create_mock_result(pdf_content, filename):
     """Create mock processing results for demo purposes"""
@@ -625,7 +623,7 @@ def create_mock_result(pdf_content, filename):
                 'kostsenter': 1001,
                 'telefonnummer': '91854560',
                 'sum_denne_periode': 450.75,
-                'match_status': 'KONTERT',
+                'match_status': 'ALLOKERT',
                 'confidence_score': 0.95,
                 'deviation_reason': ''
             },
@@ -636,7 +634,7 @@ def create_mock_result(pdf_content, filename):
                 'kostsenter': 1002,
                 'telefonnummer': '92078335',
                 'sum_denne_periode': 320.50,
-                'match_status': 'KONTERT',
+                'match_status': 'ALLOKERT',
                 'confidence_score': 0.90,
                 'deviation_reason': ''
             },
@@ -647,7 +645,7 @@ def create_mock_result(pdf_content, filename):
                 'kostsenter': 1003,
                 'telefonnummer': '90063358',
                 'sum_denne_periode': 275.00,
-                'match_status': 'KONTERT',
+                'match_status': 'ALLOKERT',
                 'confidence_score': 0.88,
                 'deviation_reason': ''
             },
@@ -658,7 +656,7 @@ def create_mock_result(pdf_content, filename):
                 'kostsenter': None,
                 'telefonnummer': '90123456',
                 'sum_denne_periode': 380.25,
-                'match_status': 'KREVER_MANUELL_KONTERING',
+                'match_status': 'KREVER_MANUELL_BEHANDLING',
                 'confidence_score': 0.0,
                 'deviation_reason': 'Ansatt "Maria Lindström" ikke funnet i OneMed kostnadsbærer-registeret'
             }
@@ -673,89 +671,89 @@ def create_mock_result(pdf_content, filename):
             'unmatched_count': 1,
             'processing_confidence': 0.93,
             'requires_manual_review': True,
-            'validation_errors': ['1 ansatt kunne ikke konteres automatisk'],
+            'validation_errors': ['1 kostnad krever manuell behandling'],
             'totalbeløp_stemmer': True
         }
     }
 
 def display_results(invoice_data, is_full_parser=True):
-    """Display processing results with OneMed styling and Norwegian terminology"""
+    """Display processing results with professional OneMed styling and Norwegian financial terminology"""
     
     # Success header
     parser_status = "Full OneMed Parser" if is_full_parser else "Demo Modus"
     st.markdown(f"""
-    <div class="onemed-container" style="text-align: center; border-left: 4px solid #059669;">
-        <h2 class="text-success">✅ Faktura behandlet med OneMed Fakturabehandling!</h2>
-        <p class="text-secondary">Automatisk kontering fullført med norsk finansterminologi ({parser_status})</p>
+    <div class="onemed-container" style="text-align: center; border-left: 4px solid #4CAF50;">
+        <h2 class="text-success">Faktura behandlet med OneMed Fakturabehandling</h2>
+        <p class="text-secondary">Automatisk kostnadsallokering fullført med norsk finansterminologi ({parser_status})</p>
     </div>
     """, unsafe_allow_html=True)
     
-    # Summary metrics
-    st.markdown("## 📊 OneMed Konteringssammendrag")
+    # Summary metrics  
+    st.markdown("## OneMed Kostnadsallokering - Sammendrag")
     
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
         st.metric(
-            "💰 Totalt Beløp",
+            "Totalt Beløp",
             f"{invoice_data['beløp_sammendrag']['totalbeløp']:.2f} NOK",
             help="Totalt fakturabeløp i norske kroner"
         )
     
     with col2:
-        konterte = len([cb for cb in invoice_data['kostnadsbarer_telia'] 
-                       if cb['match_status'] == 'KONTERT'])
+        allokerte = len([cb for cb in invoice_data['kostnadsbarer_telia'] 
+                       if cb['match_status'] == 'ALLOKERT'])
         totalt = len(invoice_data['kostnadsbarer_telia'])
-        delta = f"+{konterte}" if konterte > 0 else None
-        st.metric("✅ Konterte Ansatte", f"{konterte}/{totalt}", delta=delta)
+        delta = f"+{allokerte}" if allokerte > 0 else None
+        st.metric("Allokerte Kostnader", f"{allokerte}/{totalt}", delta=delta)
     
     with col3:
         avvik = invoice_data['kvalitetskontroll']['unmatched_count']
         delta_color = "inverse" if avvik > 0 else "normal"
-        st.metric("🚨 Konteringsavvik", avvik, 
+        st.metric("Manuelle Behandlinger", avvik, 
                  delta=f"{avvik} krever manuell behandling" if avvik > 0 else "Ingen avvik",
                  delta_color=delta_color)
     
     with col4:
         tillit = invoice_data['kvalitetskontroll']['processing_confidence'] * 100
         delta_color = "normal" if tillit >= 90 else "inverse"
-        st.metric("🎯 Systemtillit", f"{tillit:.0f}%", 
+        st.metric("Systemtillit", f"{tillit:.0f}%", 
                  delta="Høy tillit" if tillit >= 90 else "Moderat tillit",
                  delta_color=delta_color)
     
     # Quality control alerts
     if invoice_data['kvalitetskontroll']['validation_errors']:
-        st.markdown("## 🚨 OneMed Kvalitetskontroll")
+        st.markdown("## OneMed Kvalitetskontroll")
         st.markdown("""
-        <div class="onemed-container" style="border-left: 4px solid #d97706;">
-            <h4 class="text-warning">⚠️ Viktige merknader for OneMed</h4>
+        <div class="onemed-container" style="border-left: 4px solid #FF9800;">
+            <h4 class="text-warning">Viktige merknader for OneMed</h4>
             <p class="text-secondary">Følgende punkter krever oppmerksomhet fra finansavdelingen:</p>
         </div>
         """, unsafe_allow_html=True)
         
         for error in invoice_data['kvalitetskontroll']['validation_errors']:
-            st.warning(f"⚠️ {error}")
+            st.warning(f"{error}")
     
-    # Cost bearer results
-    st.markdown("## 👥 OneMed Kostnadsbærer-kontering")
+    # Cost allocation results
+    st.markdown("## OneMed Kostnadsallokering")
     st.markdown("""
     <div class="onemed-container">
-        <p class="text-secondary">Resultater fra automatisk matching mot OneMed kostnadsbærer-registeret</p>
+        <p class="text-secondary">Resultater fra automatisk kostnadsallokering mot OneMed kostnadsbærer-registeret</p>
     </div>
     """, unsafe_allow_html=True)
     
-    # Create structured table for cost bearers
+    # Create structured table for cost allocation
     for i, cb in enumerate(invoice_data['kostnadsbarer_telia']):
         with st.container():
             cols = st.columns([3, 1, 1, 2])
             
             with cols[0]:
-                if cb['match_status'] == 'KONTERT':
-                    st.success(f"✅ **{cb['navn_fra_faktura']}**")
+                if cb['match_status'] == 'ALLOKERT':
+                    st.success(f"**{cb['navn_fra_faktura']}**")
                     if cb['matched_fornavn'] and cb['matched_etternavn']:
                         st.caption(f"Matchet: {cb['matched_fornavn']} {cb['matched_etternavn']}")
                 else:
-                    st.error(f"🚨 **{cb['navn_fra_faktura']}**")
+                    st.error(f"**{cb['navn_fra_faktura']}**")
                     if cb['deviation_reason']:
                         st.caption(f"Årsak: {cb['deviation_reason']}")
             
@@ -766,7 +764,7 @@ def display_results(invoice_data, is_full_parser=True):
                     st.markdown("**Kostsenter:**<br>–", unsafe_allow_html=True)
             
             with cols[2]:
-                status_display = 'KONTERT' if cb['match_status'] == 'KONTERT' else 'AVVIK'
+                status_display = 'ALLOKERT' if cb['match_status'] == 'ALLOKERT' else 'MANUELL'
                 st.markdown(f"**Status:**<br>{status_display}", unsafe_allow_html=True)
             
             with cols[3]:
@@ -776,7 +774,7 @@ def display_results(invoice_data, is_full_parser=True):
         st.divider()
     
     # Invoice details
-    with st.expander("📄 OneMed Fakturaopplysninger", expanded=False):
+    with st.expander("OneMed Fakturaopplysninger", expanded=False):
         st.markdown("""
         <div class="onemed-container">
             <h4 class="text-primary">Uttrukket informasjon fra Telia Norge AS faktura</h4>
@@ -787,21 +785,21 @@ def display_results(invoice_data, is_full_parser=True):
         
         with col1:
             st.markdown(f"""
-            **🏢 Leverandør:** {invoice_data['leverandor']['navn']}  
-            **📄 Fakturanummer:** {invoice_data['faktura_metadata']['fakturanummer']}  
-            **📅 Fakturadato:** {invoice_data['faktura_metadata']['fakturadato']}
+            **Leverandør:** {invoice_data['leverandor']['navn']}  
+            **Fakturanummer:** {invoice_data['faktura_metadata']['fakturanummer']}  
+            **Fakturadato:** {invoice_data['faktura_metadata']['fakturadato']}
             """)
         
         with col2:
             if invoice_data['faktura_metadata'].get('periode_fra'):
                 st.markdown(f"""
-                **📋 Periode:** {invoice_data['faktura_metadata']['periode_fra']} - {invoice_data['faktura_metadata']['periode_til']}  
-                **💰 Totalbeløp:** {invoice_data['beløp_sammendrag']['totalbeløp']:.2f} {invoice_data['beløp_sammendrag']['valuta']}  
-                **✅ Kvalitet:** {invoice_data['kvalitetskontroll']['processing_confidence']*100:.1f}% systemtillit
+                **Periode:** {invoice_data['faktura_metadata']['periode_fra']} - {invoice_data['faktura_metadata']['periode_til']}  
+                **Totalbeløp:** {invoice_data['beløp_sammendrag']['totalbeløp']:.2f} {invoice_data['beløp_sammendrag']['valuta']}  
+                **Kvalitet:** {invoice_data['kvalitetskontroll']['processing_confidence']*100:.1f}% systemtillit
                 """)
     
     # Line details table
-    with st.expander("📋 OneMed Linjedetaljer", expanded=False):
+    with st.expander("OneMed Linjedetaljer", expanded=False):
         st.markdown("""
         <div class="onemed-container">
             <h4 class="text-primary">Individuelle tjenester fra fakturaen</h4>
@@ -822,44 +820,179 @@ def display_results(invoice_data, is_full_parser=True):
         df = pd.DataFrame(lines_data)
         st.dataframe(df, use_container_width=True, hide_index=True)
     
-    # Action buttons
+    # Finansrapport generering  
     st.markdown("---")
+    st.markdown("## Finansrapport for OneMed")
+    
     col1, col2, col3 = st.columns([1, 1, 1])
     
     with col1:
-        if st.button("🔄 Behandle Ny Faktura", use_container_width=True):
+        if st.button("Behandle Ny Faktura", use_container_width=True):
             st.rerun()
     
     with col2:
-        # Create downloadable report
-        report_data = {
-            'onemed_faktura_rapport': {
-                'faktura_metadata': invoice_data['faktura_metadata'],
-                'kostnadsbarer': invoice_data['kostnadsbarer_telia'],
-                'kvalitetskontroll': invoice_data['kvalitetskontroll']
-            }
-        }
+        # Create comprehensive finance report
+        finance_report = create_finance_report(invoice_data)
         st.download_button(
-            label="📥 Last ned OneMed rapport",
-            data=json.dumps(report_data, indent=2, ensure_ascii=False),
-            file_name=f"onemed_telia_rapport_{invoice_data['faktura_metadata']['fakturanummer']}.json",
-            mime="application/json",
+            label="Last ned Finansrapport (Excel)",
+            data=finance_report['excel_data'],
+            file_name=f"onemed_kostnadsrapport_{invoice_data['faktura_metadata']['fakturanummer']}.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             use_container_width=True
         )
     
     with col3:
-        st.markdown("""
-        <button onclick="window.print()" style="
-            background: linear-gradient(135deg, #059669 0%, #047857 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 0.5rem 1rem;
-            width: 100%;
-            cursor: pointer;
-            font-weight: 600;
-        ">🖨️ Skriv ut OneMed rapport</button>
-        """, unsafe_allow_html=True)
+        # Create CSV export for accounting systems
+        csv_data = create_accounting_csv(invoice_data)
+        st.download_button(
+            label="Last ned CSV (Regnskapssystem)",
+            data=csv_data,
+            file_name=f"onemed_kontering_{invoice_data['faktura_metadata']['fakturanummer']}.csv",
+            mime="text/csv",
+            use_container_width=True
+        )
+
+def create_finance_report(invoice_data):
+    """Create a comprehensive Excel report for finance department"""
+    import io
+    from datetime import datetime
+    
+    # Create in-memory Excel file
+    excel_buffer = io.BytesIO()
+    
+    try:
+        import pandas as pd
+        from openpyxl import Workbook
+        from openpyxl.styles import Font, PatternFill, Border, Side, Alignment
+        from openpyxl.utils.dataframe import dataframe_to_rows
+        
+        wb = Workbook()
+        
+        # Summary Sheet
+        ws_summary = wb.active
+        ws_summary.title = "Sammendrag"
+        
+        # Header
+        ws_summary['A1'] = "OneMed Kostnadsrapport - Telia Norge AS"
+        ws_summary['A1'].font = Font(bold=True, size=16)
+        ws_summary['A3'] = f"Fakturanummer: {invoice_data['faktura_metadata']['fakturanummer']}"
+        ws_summary['A4'] = f"Fakturadato: {invoice_data['faktura_metadata']['fakturadato']}"
+        ws_summary['A5'] = f"Totalbeløp: {invoice_data['beløp_sammendrag']['totalbeløp']:.2f} NOK"
+        ws_summary['A6'] = f"Generert: {datetime.now().strftime('%d.%m.%Y %H:%M')}"
+        
+        # Cost allocation summary
+        ws_summary['A8'] = "Kostnadsallokering:"
+        ws_summary['A8'].font = Font(bold=True)
+        
+        allokerte = len([cb for cb in invoice_data['kostnadsbarer_telia'] if cb['match_status'] == 'ALLOKERT'])
+        manuelle = invoice_data['kvalitetskontroll']['unmatched_count']
+        
+        ws_summary['A9'] = f"Automatisk allokerte kostnader: {allokerte}"
+        ws_summary['A10'] = f"Krever manuell behandling: {manuelle}"
+        ws_summary['A11'] = f"Systemtillit: {invoice_data['kvalitetskontroll']['processing_confidence']*100:.1f}%"
+        
+        # Cost allocation details sheet
+        ws_details = wb.create_sheet("Kostnadsfordeling")
+        
+        # Headers for cost allocation
+        headers = ['Ansatt', 'Fornavn', 'Etternavn', 'Kostsenter', 'Telefon', 'Beløp (NOK)', 'Status', 'Avviksbegrunnelse']
+        for idx, header in enumerate(headers, 1):
+            cell = ws_details.cell(row=1, column=idx)
+            cell.value = header
+            cell.font = Font(bold=True)
+            cell.fill = PatternFill(start_color="497886", end_color="497886", fill_type="solid")
+            cell.font = Font(bold=True, color="FFFFFF")
+        
+        # Data rows
+        for row_idx, cb in enumerate(invoice_data['kostnadsbarer_telia'], 2):
+            ws_details.cell(row=row_idx, column=1).value = cb['navn_fra_faktura']
+            ws_details.cell(row=row_idx, column=2).value = cb['matched_fornavn']
+            ws_details.cell(row=row_idx, column=3).value = cb['matched_etternavn']
+            ws_details.cell(row=row_idx, column=4).value = cb['kostsenter']
+            ws_details.cell(row=row_idx, column=5).value = cb['telefonnummer']
+            ws_details.cell(row=row_idx, column=6).value = cb['sum_denne_periode']
+            ws_details.cell(row=row_idx, column=7).value = cb['match_status']
+            ws_details.cell(row=row_idx, column=8).value = cb['deviation_reason']
+            
+            # Color code based on status
+            if cb['match_status'] == 'ALLOKERT':
+                fill = PatternFill(start_color="C8E6C9", end_color="C8E6C9", fill_type="solid")
+            else:
+                fill = PatternFill(start_color="FFCDD2", end_color="FFCDD2", fill_type="solid")
+            
+            for col in range(1, 9):
+                ws_details.cell(row=row_idx, column=col).fill = fill
+        
+        # Auto-adjust column widths
+        for column in ws_details.columns:
+            max_length = 0
+            column_letter = column[0].column_letter
+            for cell in column:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(str(cell.value))
+                except:
+                    pass
+            adjusted_width = (max_length + 2) * 1.2
+            ws_details.column_dimensions[column_letter].width = adjusted_width
+        
+        # Save to buffer
+        wb.save(excel_buffer)
+        excel_buffer.seek(0)
+        
+        return {
+            'excel_data': excel_buffer.getvalue(),
+            'filename': f"onemed_kostnadsrapport_{invoice_data['faktura_metadata']['fakturanummer']}.xlsx"
+        }
+        
+    except ImportError:
+        # Fallback to simple JSON if Excel libraries not available
+        import json
+        json_data = {
+            'onemed_finansrapport': {
+                'faktura_metadata': invoice_data['faktura_metadata'],
+                'kostnadsbarer': invoice_data['kostnadsbarer_telia'],
+                'kvalitetskontroll': invoice_data['kvalitetskontroll'],
+                'sammendrag': {
+                    'totalt_beløp': invoice_data['beløp_sammendrag']['totalbeløp'],
+                    'allokerte_kostnader': len([cb for cb in invoice_data['kostnadsbarer_telia'] if cb['match_status'] == 'ALLOKERT']),
+                    'manuelle_behandlinger': invoice_data['kvalitetskontroll']['unmatched_count']
+                }
+            }
+        }
+        return {
+            'excel_data': json.dumps(json_data, indent=2, ensure_ascii=False).encode('utf-8'),
+            'filename': f"onemed_finansrapport_{invoice_data['faktura_metadata']['fakturanummer']}.json"
+        }
+
+def create_accounting_csv(invoice_data):
+    """Create CSV export formatted for Norwegian accounting systems"""
+    import io
+    from datetime import datetime
+    
+    csv_buffer = io.StringIO()
+    
+    # Write CSV header
+    csv_buffer.write("Fakturanummer,Ansatt,Kostsenter,Beløp,Valuta,Status,Dato,Bilag\n")
+    
+    # Write data rows
+    for cb in invoice_data['kostnadsbarer_telia']:
+        row = [
+            invoice_data['faktura_metadata']['fakturanummer'],
+            cb['navn_fra_faktura'],
+            cb['kostsenter'] or 'UALLOKERT',
+            f"{cb['sum_denne_periode']:.2f}",
+            'NOK',
+            cb['match_status'],
+            invoice_data['faktura_metadata']['fakturadato'],
+            f"TELIA-{invoice_data['faktura_metadata']['fakturanummer']}"
+        ]
+        csv_buffer.write(','.join(map(str, row)) + '\n')
+    
+    csv_content = csv_buffer.getvalue()
+    csv_buffer.close()
+    
+    return csv_content.encode('utf-8')
 
 if __name__ == "__main__":
     main()
