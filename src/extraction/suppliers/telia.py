@@ -93,8 +93,59 @@ class TeliaParser(BaseSupplierParser):
         
         return invoice_data
     
+    def _parse_norwegian_name(self, name_with_phone: str) -> tuple[str, str, str]:
+        """
+        Parse Norwegian name according to cursor-rules-faktura.md specifications.
+        
+        Examples:
+        - "Annlaug Amundsen - 918 54 560" → ("Annlaug", "Amundsen", "918 54 560")
+        - "Ks Andreas . - 920 78 335" → ("Andreas", "", "920 78 335")  
+        - "Allan Simonsen - 900 63 358" → ("Allan", "Simonsen", "900 63 358")
+        
+        Args:
+            name_with_phone: Raw name string from invoice
+            
+        Returns:
+            Tuple of (first_name, last_name, phone_number)
+        """
+        # Remove phone number (everything after last "-")
+        if ' - ' in name_with_phone:
+            name_part, phone_part = name_with_phone.rsplit(' - ', 1)
+            phone_number = phone_part.strip().replace(' ', '')
+        else:
+            name_part = name_with_phone
+            phone_number = ""
+        
+        # Remove common Norwegian titles and prefixes
+        norwegian_titles = ['Ks', 'Dr', 'Prof', 'Mr', 'Mrs', 'Ms', 'Frk', 'Fr']
+        
+        # Split name into words and remove titles
+        name_words = name_part.strip().split()
+        filtered_words = []
+        
+        for word in name_words:
+            # Remove trailing dots and check if it's a title
+            clean_word = word.rstrip('.')
+            if clean_word not in norwegian_titles and clean_word != '.':
+                filtered_words.append(clean_word)
+        
+        # Extract first name and last name
+        if len(filtered_words) == 0:
+            first_name = ""
+            last_name = ""
+        elif len(filtered_words) == 1:
+            first_name = filtered_words[0]
+            last_name = ""
+        else:
+            first_name = filtered_words[0]
+            last_name = ' '.join(filtered_words[1:])  # Handle multiple last names
+        
+        self.logger.debug(f"Parsed name: '{name_with_phone}' → first='{first_name}', last='{last_name}', phone='{phone_number}'")
+        
+        return first_name, last_name, phone_number
+
     def _extract_invoice_lines(self, content: str) -> List[InvoiceLine]:
-        """Extract individual invoice lines from content."""
+        """Extract individual invoice lines from content with Norwegian name parsing."""
         lines = []
         
         # Find service specification section
@@ -103,19 +154,33 @@ class TeliaParser(BaseSupplierParser):
             self.logger.warning("Could not find service specification section")
             return lines
         
-        # Extract lines with employee names and amounts
-        line_pattern = r'([A-ZÆØÅ][a-zæøå\s]+)\s*[-–—]\s*(\d{3}\s*\d{2}\s*\d{3})\s*(\d+[,.]?\d*)'
+        # Extract lines with employee names and amounts  
+        # Pattern captures: (name) - (phone) (amount)
+        # Includes Nordic/international characters: æøåäöüéèàáâ etc.
+        line_pattern = r'([A-ZÆØÅÄÖÜ][a-zæøåäöüéèàáâîïôûçñA-ZÆØÅÄÖÜÉÈÀÁÂÎÏÔÛÇÑ\s\.]+?)\s*[-–—]\s*(\d{3}\s*\d{2}\s*\d{3})\s*(\d+[,.]?\d*)'
         matches = re.finditer(line_pattern, service_section)
         
         for match in matches:
             try:
-                employee_name = match.group(1).strip()
-                phone_number = match.group(2).replace(' ', '')
+                raw_name = match.group(1).strip()
+                raw_phone = match.group(2).replace(' ', '')
                 amount_str = match.group(3).replace(',', '.')
                 amount = float(amount_str)
                 
+                # Combine name and phone for Norwegian parsing
+                name_with_phone = f"{raw_name} - {raw_phone}"
+                
+                # Parse Norwegian name according to cursor rules
+                first_name, last_name, phone_number = self._parse_norwegian_name(name_with_phone)
+                
+                # Construct full clean name for employee_name field
+                if last_name:
+                    clean_employee_name = f"{first_name} {last_name}"
+                else:
+                    clean_employee_name = first_name
+                
                 line = InvoiceLine(
-                    employee_name=employee_name,
+                    employee_name=clean_employee_name,
                     phone_number=phone_number,
                     amount=amount,
                     currency="NOK"
@@ -130,13 +195,25 @@ class TeliaParser(BaseSupplierParser):
     
     def _find_service_section(self, content: str) -> Optional[str]:
         """Find the service specification section in the invoice."""
-        # Look for service specification header
+        # Look for service specification header and capture until end markers
         start_patterns = [
-            r'Tjenestespesifikasjon for.*?(?=\n\n|\n[A-Z]|$)',
-            r'Tjenestespesifikasjon for \(fortsettelse\).*?(?=\n\n|\n[A-Z]|$)'
+            # Capture from "Tjenestespesifikasjon for" until "SUM DENNE PERIODE" or similar
+            r'Tjenestespesifikasjon for.*?(?=SUM DENNE PERIODE|Totalt|Å betale|$)',
+            r'Tjenestespesifikasjon for \(fortsettelse\).*?(?=SUM DENNE PERIODE|Totalt|Å betale|$)'
         ]
         
         for pattern in start_patterns:
+            match = re.search(pattern, content, re.DOTALL | re.IGNORECASE)
+            if match:
+                return match.group(0)
+        
+        # Fallback: if no specific end markers found, try broader capture
+        fallback_patterns = [
+            r'Tjenestespesifikasjon for.*',
+            r'Tjenestespesifikasjon for \(fortsettelse\).*'
+        ]
+        
+        for pattern in fallback_patterns:
             match = re.search(pattern, content, re.DOTALL | re.IGNORECASE)
             if match:
                 return match.group(0)
