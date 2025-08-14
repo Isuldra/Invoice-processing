@@ -417,36 +417,88 @@ def display_results(invoice_data):
     # Quality control alerts
     if invoice_data['kvalitetskontroll']['validation_errors']:
         st.markdown("## 🚨 Kvalitetskontroll")
+        st.markdown("""
+        <div class="onemed-container" style="border-left: 4px solid #d97706;">
+            <h4 class="text-warning">⚠️ Viktige merknader</h4>
+            <p class="text-secondary">Følgende punkter krever oppmerksomhet:</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
         for error in invoice_data['kvalitetskontroll']['validation_errors']:
             st.warning(f"⚠️ {error}")
     
     # Cost bearer results
     st.markdown("## 👥 Kostnadsbærer-kontering")
+    st.markdown("""
+    <div class="onemed-container">
+        <p class="text-secondary">Resultater fra automatisk matching mot kostnadsbærer-registeret</p>
+    </div>
+    """, unsafe_allow_html=True)
     
-    for cb in invoice_data['kostnadsbarer_telia']:
+    # Create columns for better layout
+    for i, cb in enumerate(invoice_data['kostnadsbarer_telia']):
         with st.container():
-            if cb['match_status'] == 'KONTERT':
-                st.success(f"✅ **{cb['navn_fra_faktura']}** → Kostsenter {cb['kostsenter']} ({cb['sum_denne_periode']:.2f} NOK)")
-            else:
-                st.error(f"🚨 **{cb['navn_fra_faktura']}** → {cb['match_status']}")
-                if cb['deviation_reason']:
-                    st.caption(f"Årsak: {cb['deviation_reason']}")
+            cols = st.columns([3, 1, 1, 2])
+            
+            with cols[0]:
+                if cb['match_status'] == 'KONTERT':
+                    st.success(f"✅ **{cb['navn_fra_faktura']}**")
+                    if cb['matched_fornavn'] and cb['matched_etternavn']:
+                        st.caption(f"Matchet: {cb['matched_fornavn']} {cb['matched_etternavn']}")
+                else:
+                    st.error(f"🚨 **{cb['navn_fra_faktura']}**")
+                    if cb['deviation_reason']:
+                        st.caption(f"Årsak: {cb['deviation_reason']}")
+            
+            with cols[1]:
+                if cb['kostsenter']:
+                    st.markdown(f"**Kostsenter:**<br>{cb['kostsenter']}", unsafe_allow_html=True)
+                else:
+                    st.markdown("**Kostsenter:**<br>–", unsafe_allow_html=True)
+            
+            with cols[2]:
+                st.markdown(f"**Status:**<br>{'KONTERT' if cb['match_status'] == 'KONTERT' else 'AVVIK'}", 
+                           unsafe_allow_html=True)
+            
+            with cols[3]:
+                st.markdown(f"**Beløp:**<br>{cb['sum_denne_periode']:.2f} NOK", 
+                           unsafe_allow_html=True)
+        
+        st.divider()
     
     # Invoice details
     with st.expander("📄 Fakturaopplysninger", expanded=False):
+        st.markdown("""
+        <div class="onemed-container">
+            <h4 class="text-primary">Uttrukket informasjon fra Telia Norge AS faktura</h4>
+        </div>
+        """, unsafe_allow_html=True)
+        
         col1, col2 = st.columns(2)
         
         with col1:
-            st.markdown("**Leverandør:** " + invoice_data['leverandor']['navn'])
-            st.markdown("**Fakturanummer:** " + invoice_data['faktura_metadata']['fakturanummer'])
-            st.markdown("**Fakturadato:** " + invoice_data['faktura_metadata']['fakturadato'])
+            st.markdown(f"""
+            **🏢 Leverandør:** {invoice_data['leverandor']['navn']}  
+            **📄 Fakturanummer:** {invoice_data['faktura_metadata']['fakturanummer']}  
+            **📅 Fakturadato:** {invoice_data['faktura_metadata']['fakturadato']}
+            """)
         
         with col2:
             if invoice_data['faktura_metadata']['periode_fra']:
-                st.markdown(f"**Periode:** {invoice_data['faktura_metadata']['periode_fra']} - {invoice_data['faktura_metadata']['periode_til']}")
+                st.markdown(f"""
+                **📋 Periode:** {invoice_data['faktura_metadata']['periode_fra']} - {invoice_data['faktura_metadata']['periode_til']}  
+                **💰 Totalbeløp:** {invoice_data['beløp_sammendrag']['totalbeløp']:.2f} {invoice_data['beløp_sammendrag']['valuta']}  
+                **✅ Kvalitet:** {invoice_data['kvalitetskontroll']['processing_confidence']*100:.1f}% systemtillit
+                """)
     
     # Line details table
     with st.expander("📋 Linjedetaljer", expanded=False):
+        st.markdown("""
+        <div class="onemed-container">
+            <h4 class="text-primary">Individuelle tjenester fra fakturaen</h4>
+        </div>
+        """, unsafe_allow_html=True)
+        
         import pandas as pd
         
         lines_data = []
@@ -455,11 +507,48 @@ def display_results(invoice_data):
                 'Tjeneste': line['produktnavn'],
                 'Ansatt': line['employee_name'],
                 'Telefon': line['phone_number'],
-                'Beløp': f"{line['linjesum']:.2f} NOK"
+                'Beløp (NOK)': f"{line['linjesum']:.2f}"
             })
         
         df = pd.DataFrame(lines_data)
-        st.dataframe(df, use_container_width=True)
+        st.dataframe(df, use_container_width=True, hide_index=True)
+    
+    # Action buttons
+    st.markdown("---")
+    col1, col2, col3 = st.columns([1, 1, 1])
+    
+    with col1:
+        if st.button("🔄 Behandle Ny Faktura", use_container_width=True):
+            st.rerun()
+    
+    with col2:
+        # Create downloadable report
+        report_data = {
+            'faktura_metadata': invoice_data['faktura_metadata'],
+            'kostnadsbarer': invoice_data['kostnadsbarer_telia'],
+            'kvalitetskontroll': invoice_data['kvalitetskontroll']
+        }
+        st.download_button(
+            label="📥 Last ned rapport",
+            data=str(report_data),
+            file_name=f"telia_rapport_{invoice_data['faktura_metadata']['fakturanummer']}.txt",
+            mime="text/plain",
+            use_container_width=True
+        )
+    
+    with col3:
+        st.markdown("""
+        <button onclick="window.print()" style="
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            width: 100%;
+            cursor: pointer;
+            font-weight: 600;
+        ">🖨️ Skriv ut rapport</button>
+        """, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()

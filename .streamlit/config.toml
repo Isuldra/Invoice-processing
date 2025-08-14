@@ -1,0 +1,29 @@
+# OneMed Fakturabehandling - Streamlit Configuration
+# Optimalisert for OneMed sin profesjonelle helseteknologi-identitet
+
+[theme]
+base = "light"  # Standard lys modus (kan endres i appen)
+primaryColor = "#2563eb"  # OneMed Medical Blue
+backgroundColor = "#ffffff"  # Clean white background
+secondaryBackgroundColor = "#f8fafc"  # Light gray surfaces
+textColor = "#1e293b"  # Dark text for readability
+font = "sans serif"  # Clean, professional font
+
+[server]
+# Lokalt utviklingsmiljø - perfekt for interne verktøy
+headless = false  # Åpner automatisk i nettleser
+port = 8501  # Standard Streamlit port
+address = "localhost"  # Kun lokal tilgang for sikkerhet
+
+[browser]
+gatherUsageStats = false  # Ikke send data til Streamlit
+serverAddress = "localhost"
+serverPort = 8501
+
+[ui]
+hideTopBar = true  # Skjul Streamlit-menyen for renere utseende
+hideSidebarNav = false  # Vis sidebar-navigasjon
+
+[global]
+developmentMode = false  # Produksjonsmodus for stabilitet
+dataFrameSerialization = "legacy"  # Kompatibilitet med pandas
