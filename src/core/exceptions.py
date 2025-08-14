@@ -11,8 +11,8 @@ class TeliaProcessingError(Exception):
     pass
 
 
-class OCRException(TeliaProcessingError):
-    """Exception raised when OCR processing fails."""
+class TextExtractionException(TeliaProcessingError):
+    """Exception raised when text extraction fails."""
     
     def __init__(self, message: str, engine: str = None, confidence: float = None):
         self.message = message

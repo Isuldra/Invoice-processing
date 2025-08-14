@@ -87,8 +87,8 @@ def process_batch(input_dir: str, output_dir: Optional[str] = None) -> bool:
 def show_config() -> None:
     """Display current configuration."""
     logger.info("Current Configuration:")
-    logger.info(f"OCR Confidence Threshold: {config.ocr.confidence_threshold}")
-    logger.info(f"Processing DPI: {config.processing.dpi}")
+            logger.info(f"Processing timeout: {config.processing.timeout_seconds}s")
+    logger.info(f"Max workers: {config.processing.max_workers}")
     logger.info(f"Validation Thresholds: {config.validation.name_confidence_threshold}")
 
 

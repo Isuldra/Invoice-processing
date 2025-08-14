@@ -107,12 +107,12 @@ class TeliaProcessorGUI:
         options_frame = ttk.LabelFrame(parent, text="Processing Options", padding="10")
         options_frame.grid(row=3, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=(0, 10))
         
-        # OCR confidence threshold
-        ttk.Label(options_frame, text="OCR Confidence Threshold:").grid(row=0, column=0, sticky=tk.W)
-        self.confidence_var = tk.DoubleVar(value=config.ocr.confidence_threshold)
-        confidence_scale = ttk.Scale(options_frame, from_=0.1, to=1.0, 
-                                    variable=self.confidence_var, orient=tk.HORIZONTAL)
-        confidence_scale.grid(row=0, column=1, sticky=(tk.W, tk.E), padx=(10, 0))
+        # Processing timeout
+        ttk.Label(options_frame, text="Processing Timeout (seconds):").grid(row=0, column=0, sticky=tk.W)
+        self.timeout_var = tk.IntVar(value=config.processing.timeout_seconds)
+        timeout_scale = ttk.Scale(options_frame, from_=30, to=300, 
+                                 variable=self.timeout_var, orient=tk.HORIZONTAL)
+        timeout_scale.grid(row=0, column=1, sticky=(tk.W, tk.E), padx=(10, 0))
         
         # Processing DPI
         ttk.Label(options_frame, text="Processing DPI:").grid(row=1, column=0, sticky=tk.W, pady=(10, 0))

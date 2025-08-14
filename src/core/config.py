@@ -1,7 +1,7 @@
 """
-Configuration management for Telia PDF Processing System.
+Configuration management for Invoice Processing System.
 
-This module handles all configuration settings including OCR engines,
+This module handles all configuration settings for text-based processing,
 processing parameters, and system settings.
 """
 
@@ -13,28 +13,10 @@ from dataclasses import dataclass
 
 
 @dataclass
-class OCRConfig:
-    """Configuration for OCR engines."""
-    tesseract_path: Optional[str] = None
-    tesseract_config: str = "--oem 3 --psm 6"
-    easyocr_languages: list = None
-    confidence_threshold: float = 0.7
-    max_workers: int = 2
-
-    def __post_init__(self):
-        if self.easyocr_languages is None:
-            self.easyocr_languages = ['en', 'no']
-
-
-@dataclass
 class ProcessingConfig:
     """Configuration for document processing."""
-    dpi: int = 250  # Reduced from 300 for performance
-    preprocessing_enabled: bool = True
-    deskew_enabled: bool = True
-    noise_reduction: bool = True
-    contrast_enhancement: bool = True
     timeout_seconds: int = 60
+    max_workers: int = 2
 
 
 @dataclass
@@ -51,7 +33,6 @@ class Config:
     
     def __init__(self, config_path: Optional[str] = None):
         self.config_path = config_path or self._get_default_config_path()
-        self.ocr = OCRConfig()
         self.processing = ProcessingConfig()
         self.validation = ValidationConfig()
         self._load_config()
@@ -75,11 +56,6 @@ class Config:
     
     def _update_from_dict(self, config_data: Dict[str, Any]):
         """Update configuration from dictionary."""
-        if 'ocr' in config_data:
-            for key, value in config_data['ocr'].items():
-                if hasattr(self.ocr, key):
-                    setattr(self.ocr, key, value)
-        
         if 'processing' in config_data:
             for key, value in config_data['processing'].items():
                 if hasattr(self.processing, key):
@@ -93,20 +69,9 @@ class Config:
     def _create_default_config(self):
         """Create default configuration file."""
         config_data = {
-            'ocr': {
-                'tesseract_path': None,
-                'tesseract_config': '--oem 3 --psm 6',
-                'easyocr_languages': ['en', 'no'],
-                'confidence_threshold': 0.7,
-                'max_workers': 2
-            },
             'processing': {
-                'dpi': 250,
-                'preprocessing_enabled': True,
-                'deskew_enabled': True,
-                'noise_reduction': True,
-                'contrast_enhancement': True,
-                'timeout_seconds': 60
+                'timeout_seconds': 60,
+                'max_workers': 2
             },
             'validation': {
                 'name_confidence_threshold': 0.8,
@@ -129,20 +94,9 @@ class Config:
     def save(self):
         """Save current configuration to file."""
         config_data = {
-            'ocr': {
-                'tesseract_path': self.ocr.tesseract_path,
-                'tesseract_config': self.ocr.tesseract_config,
-                'easyocr_languages': self.ocr.easyocr_languages,
-                'confidence_threshold': self.ocr.confidence_threshold,
-                'max_workers': self.ocr.max_workers
-            },
             'processing': {
-                'dpi': self.processing.dpi,
-                'preprocessing_enabled': self.processing.preprocessing_enabled,
-                'deskew_enabled': self.processing.deskew_enabled,
-                'noise_reduction': self.processing.noise_reduction,
-                'contrast_enhancement': self.processing.contrast_enhancement,
-                'timeout_seconds': self.processing.timeout_seconds
+                'timeout_seconds': self.processing.timeout_seconds,
+                'max_workers': self.processing.max_workers
             },
             'validation': {
                 'name_confidence_threshold': self.validation.name_confidence_threshold,
