@@ -1,0 +1,406 @@
+{% extends "base.html" %}
+
+{% block title %}Opplasting • OneMed Fakturabehandling{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Upload interface styling */
+    .upload-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .upload-zone {
+        position: relative;
+        border: 2px dashed var(--onemed-gray-300);
+        border-radius: 12px;
+        padding: 3rem 2rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        background: var(--onemed-gray-50);
+        min-height: 200px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        cursor: pointer;
+    }
+    
+    .upload-zone:hover {
+        border-color: var(--onemed-primary);
+        background: rgba(37, 99, 235, 0.05);
+        transform: translateY(-2px);
+    }
+    
+    .upload-zone.dragover {
+        border-color: var(--onemed-primary);
+        background: rgba(37, 99, 235, 0.1);
+        transform: scale(1.02);
+    }
+    
+    .upload-zone.has-file {
+        border-color: var(--onemed-accent);
+        background: rgba(5, 150, 105, 0.05);
+    }
+    
+    .upload-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: var(--onemed-gray-400);
+        transition: color 0.3s ease;
+    }
+    
+    .upload-zone:hover .upload-icon {
+        color: var(--onemed-primary);
+    }
+    
+    .upload-zone.has-file .upload-icon {
+        color: var(--onemed-accent);
+    }
+    
+    .upload-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--onemed-text);
+    }
+    
+    .upload-subtitle {
+        color: var(--onemed-gray-500);
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+    
+    .file-input {
+        position: absolute;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+    }
+    
+    .file-info {
+        margin-top: 1rem;
+        padding: 0.75rem;
+        background: var(--onemed-white);
+        border-radius: 8px;
+        border: 1px solid var(--onemed-gray-200);
+        font-size: 0.9rem;
+        display: none;
+    }
+    
+    .file-name {
+        font-weight: 600;
+        color: var(--onemed-text);
+    }
+    
+    .file-size {
+        color: var(--onemed-gray-500);
+        font-size: 0.8rem;
+        margin-top: 0.25rem;
+    }
+    
+    /* Process button */
+    .process-section {
+        text-align: center;
+        padding: 2rem 0;
+        border-top: 1px solid var(--onemed-gray-200);
+        margin-top: 2rem;
+    }
+    
+    .btn-process {
+        font-size: 1.1rem;
+        padding: 1rem 2.5rem;
+        background: linear-gradient(135deg, var(--onemed-primary) 0%, var(--onemed-primary-dark) 100%);
+        color: var(--onemed-white);
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 200px;
+    }
+    
+    .btn-process:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 25px rgba(37, 99, 235, 0.4);
+    }
+    
+    .btn-process:disabled {
+        background: var(--onemed-gray-300);
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+    
+    /* Instructions */
+    .instructions {
+        background: var(--onemed-white);
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border-left: 4px solid var(--onemed-primary);
+    }
+    
+    .instructions h3 {
+        color: var(--onemed-primary);
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+    }
+    
+    .instructions-list {
+        list-style: none;
+        padding: 0;
+    }
+    
+    .instructions-list li {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+    
+    .step-number {
+        background: var(--onemed-primary);
+        color: var(--onemed-white);
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        font-weight: 600;
+        flex-shrink: 0;
+        margin-top: 0.1rem;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .upload-container {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        
+        .upload-zone {
+            padding: 2rem 1rem;
+            min-height: 150px;
+        }
+        
+        .upload-icon {
+            font-size: 2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h1>📄 Fakturabehandling</h1>
+        <p>Last opp Telia Norge AS fakturaer for automatisk kontering</p>
+    </div>
+    
+    <div class="card-body">
+        <!-- Instructions -->
+        <div class="instructions">
+            <h3>📋 Slik bruker du systemet</h3>
+            <ul class="instructions-list">
+                <li>
+                    <span class="step-number">1</span>
+                    <span>Last opp en Telia Norge AS faktura (PDF-format)</span>
+                </li>
+                <li>
+                    <span class="step-number">2</span>
+                    <span>Last opp kostnadsbærer-fil (Excel) - valgfritt, bruker mock-data hvis ikke angitt</span>
+                </li>
+                <li>
+                    <span class="step-number">3</span>
+                    <span>Klikk "Behandle Faktura" for automatisk kontering</span>
+                </li>
+                <li>
+                    <span class="step-number">4</span>
+                    <span>Gjennomgå resultater og håndter eventuelle konteringsavvik</span>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Upload form -->
+        <form id="upload-form" action="{{ url_for('upload_files') }}" method="post" enctype="multipart/form-data">
+            <div class="upload-container">
+                <!-- PDF Upload Zone -->
+                <div class="upload-zone" id="pdf-zone">
+                    <input type="file" name="pdf_file" id="pdf-file" class="file-input" accept=".pdf" required>
+                    <div class="upload-icon" id="pdf-icon">📄</div>
+                    <div class="upload-title">Telia Faktura (PDF)</div>
+                    <div class="upload-subtitle">
+                        Dra og slipp PDF-fil her<br>
+                        eller klikk for å velge fil
+                    </div>
+                    <div class="file-info" id="pdf-info">
+                        <div class="file-name" id="pdf-name"></div>
+                        <div class="file-size" id="pdf-size"></div>
+                    </div>
+                </div>
+                
+                <!-- Excel Upload Zone -->
+                <div class="upload-zone" id="excel-zone">
+                    <input type="file" name="excel_file" id="excel-file" class="file-input" accept=".xlsx,.xls">
+                    <div class="upload-icon" id="excel-icon">📊</div>
+                    <div class="upload-title">Kostnadsbærere (Excel)</div>
+                    <div class="upload-subtitle">
+                        Dra og slipp Excel-fil her<br>
+                        eller klikk for å velge fil<br>
+                        <em style="color: var(--onemed-gray-400);">(Valgfritt - bruker mock-data hvis tom)</em>
+                    </div>
+                    <div class="file-info" id="excel-info">
+                        <div class="file-name" id="excel-name"></div>
+                        <div class="file-size" id="excel-size"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Process button -->
+            <div class="process-section">
+                <button type="submit" class="btn-process" id="process-btn" disabled>
+                    <span>🔄 Behandle Faktura</span>
+                </button>
+                <div style="margin-top: 1rem; color: var(--onemed-gray-500); font-size: 0.9rem;">
+                    PDF-fil må være lastet opp for å fortsette
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // File upload handling with drag & drop
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('upload-form');
+        const processBtn = document.getElementById('process-btn');
+        
+        // File upload zones
+        const uploadZones = [
+            {
+                zone: document.getElementById('pdf-zone'),
+                input: document.getElementById('pdf-file'),
+                icon: document.getElementById('pdf-icon'),
+                info: document.getElementById('pdf-info'),
+                nameEl: document.getElementById('pdf-name'),
+                sizeEl: document.getElementById('pdf-size'),
+                required: true
+            },
+            {
+                zone: document.getElementById('excel-zone'),
+                input: document.getElementById('excel-file'),
+                icon: document.getElementById('excel-icon'),
+                info: document.getElementById('excel-info'),
+                nameEl: document.getElementById('excel-name'),
+                sizeEl: document.getElementById('excel-size'),
+                required: false
+            }
+        ];
+        
+        // Setup drag & drop for each zone
+        uploadZones.forEach(setupUploadZone);
+        
+        function setupUploadZone(config) {
+            const { zone, input, icon, info, nameEl, sizeEl, required } = config;
+            
+            // Prevent default drag behaviors
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                zone.addEventListener(eventName, preventDefaults, false);
+                document.body.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            // Highlight drop zone when item is dragged over it
+            ['dragenter', 'dragover'].forEach(eventName => {
+                zone.addEventListener(eventName, () => zone.classList.add('dragover'), false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                zone.addEventListener(eventName, () => zone.classList.remove('dragover'), false);
+            });
+            
+            // Handle dropped files
+            zone.addEventListener('drop', handleDrop, false);
+            
+            // Handle file input change
+            input.addEventListener('change', () => handleFiles(input.files, config));
+            
+            function handleDrop(e) {
+                const files = e.dataTransfer.files;
+                input.files = files;
+                handleFiles(files, config);
+            }
+            
+            function handleFiles(files, config) {
+                if (files.length > 0) {
+                    const file = files[0];
+                    displayFileInfo(file, config);
+                    updateProcessButton();
+                }
+            }
+            
+            function displayFileInfo(file, config) {
+                const { zone, icon, info, nameEl, sizeEl } = config;
+                
+                // Update UI
+                zone.classList.add('has-file');
+                nameEl.textContent = file.name;
+                sizeEl.textContent = formatFileSize(file.size);
+                info.style.display = 'block';
+                
+                // Update icon based on file type
+                if (file.type.includes('pdf')) {
+                    icon.textContent = '📄';
+                } else if (file.type.includes('excel') || file.type.includes('spreadsheet')) {
+                    icon.textContent = '📊';
+                } else {
+                    icon.textContent = '📁';
+                }
+            }
+        }
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        function updateProcessButton() {
+            const pdfFile = document.getElementById('pdf-file').files[0];
+            const hasRequiredFiles = !!pdfFile;
+            
+            processBtn.disabled = !hasRequiredFiles;
+            
+            if (hasRequiredFiles) {
+                processBtn.innerHTML = '<span>🔄 Behandle Faktura</span>';
+            } else {
+                processBtn.innerHTML = '<span>📄 Last opp PDF-fil først</span>';
+            }
+        }
+        
+        // Form submission handling
+        form.addEventListener('submit', function(e) {
+            processBtn.disabled = true;
+            processBtn.innerHTML = '<span>⏳ Behandler faktura...</span>';
+        });
+        
+        // Initial state
+        updateProcessButton();
+    });
+</script>
+{% endblock %}

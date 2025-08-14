@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}OneMed Fakturabehandling{% endblock %}</title>
+    
+    <!-- CSS Styling -->
+    <style>
+        /* OneMed-inspired Professional Healthcare Design */
+        :root {
+            /* OneMed color palette - professional healthcare colors */
+            --onemed-primary: #2563eb;      /* Medical blue */
+            --onemed-primary-dark: #1e40af;
+            --onemed-secondary: #0f766e;    /* Teal green */
+            --onemed-accent: #059669;       /* Success green */
+            --onemed-warning: #d97706;      /* Warning amber */
+            --onemed-error: #dc2626;        /* Error red */
+            
+            /* Neutrals */
+            --onemed-gray-50: #f8fafc;
+            --onemed-gray-100: #f1f5f9;
+            --onemed-gray-200: #e2e8f0;
+            --onemed-gray-300: #cbd5e1;
+            --onemed-gray-400: #94a3b8;
+            --onemed-gray-500: #64748b;
+            --onemed-gray-600: #475569;
+            --onemed-gray-700: #334155;
+            --onemed-gray-800: #1e293b;
+            --onemed-gray-900: #0f172a;
+            
+            --onemed-white: #ffffff;
+            --onemed-text: var(--onemed-gray-800);
+            
+            /* Typography */
+            --font-system: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 
+                           'Helvetica Neue', Arial, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-system);
+            background: linear-gradient(135deg, var(--onemed-gray-50) 0%, var(--onemed-gray-100) 100%);
+            color: var(--onemed-text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: var(--onemed-white);
+            border-bottom: 3px solid var(--onemed-primary);
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--onemed-text);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--onemed-primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--onemed-white);
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--onemed-primary);
+        }
+
+        .subtitle {
+            color: var(--onemed-gray-500);
+            font-size: 0.875rem;
+            margin-left: auto;
+        }
+
+        /* Main content */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: calc(100vh - 120px);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--onemed-white);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--onemed-gray-200);
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--onemed-primary) 0%, var(--onemed-primary-dark) 100%);
+            color: var(--onemed-white);
+            padding: 1.5rem 2rem;
+        }
+
+        .card-header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: var(--onemed-primary);
+            color: var(--onemed-white);
+        }
+
+        .btn-primary:hover {
+            background: var(--onemed-primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-success {
+            background: var(--onemed-accent);
+            color: var(--onemed-white);
+        }
+
+        .btn-success:hover {
+            background: #047857;
+            transform: translateY(-1px);
+        }
+
+        /* Flash messages */
+        .flash-messages {
+            margin-bottom: 2rem;
+        }
+
+        .flash {
+            padding: 1rem 1.25rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .flash.error {
+            background: rgba(220, 38, 38, 0.1);
+            color: var(--onemed-error);
+            border: 1px solid rgba(220, 38, 38, 0.2);
+        }
+
+        .flash.success {
+            background: rgba(5, 150, 105, 0.1);
+            color: var(--onemed-accent);
+            border: 1px solid rgba(5, 150, 105, 0.2);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--onemed-gray-500);
+            font-size: 0.875rem;
+            border-top: 1px solid var(--onemed-gray-200);
+            margin-top: 3rem;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0 1rem;
+            }
+            
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .card-header {
+                padding: 1rem 1.5rem;
+            }
+            
+            .card-body {
+                padding: 1.5rem;
+            }
+            
+            .subtitle {
+                display: none;
+            }
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <a href="{{ url_for('index') }}" class="logo">
+                <div class="logo-icon">🏥</div>
+                <div>
+                    <div class="logo-text">OneMed</div>
+                    <div style="font-size: 0.75rem; color: var(--onemed-gray-500);">Fakturabehandling</div>
+                </div>
+            </a>
+            <div class="subtitle">
+                Automatisk kontering av Telia Norge AS fakturaer
+            </div>
+        </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="main-content">
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 OneMed Fakturabehandling • Versjon 1.0 • Telia Norge AS Integration</p>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

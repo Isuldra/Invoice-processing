@@ -1,0 +1,486 @@
+{% extends "base.html" %}
+
+{% block title %}Konteringsresultater • OneMed Fakturabehandling{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Results page styling */
+    .results-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .processing-info {
+        color: var(--onemed-gray-500);
+        font-size: 0.9rem;
+    }
+    
+    .processing-time {
+        background: var(--onemed-gray-100);
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-weight: 600;
+        color: var(--onemed-gray-700);
+    }
+    
+    /* Summary cards */
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .summary-card {
+        background: var(--onemed-white);
+        border-radius: 10px;
+        padding: 1.5rem;
+        border-left: 4px solid var(--onemed-gray-300);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+    
+    .summary-card.success {
+        border-left-color: var(--onemed-accent);
+    }
+    
+    .summary-card.warning {
+        border-left-color: var(--onemed-warning);
+    }
+    
+    .summary-card.error {
+        border-left-color: var(--onemed-error);
+    }
+    
+    .summary-card h3 {
+        font-size: 0.9rem;
+        color: var(--onemed-gray-500);
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+    }
+    
+    .summary-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--onemed-text);
+        margin-bottom: 0.25rem;
+    }
+    
+    .summary-label {
+        color: var(--onemed-gray-600);
+        font-size: 0.9rem;
+    }
+    
+    /* Status indicators */
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.375rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .status-kontert {
+        background: rgba(5, 150, 105, 0.1);
+        color: var(--onemed-accent);
+        border: 1px solid rgba(5, 150, 105, 0.2);
+    }
+    
+    .status-manuell {
+        background: rgba(217, 119, 6, 0.1);
+        color: var(--onemed-warning);
+        border: 1px solid rgba(217, 119, 6, 0.2);
+    }
+    
+    .status-flere {
+        background: rgba(220, 38, 38, 0.1);
+        color: var(--onemed-error);
+        border: 1px solid rgba(220, 38, 38, 0.2);
+    }
+    
+    /* Data tables */
+    .data-section {
+        background: var(--onemed-white);
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid var(--onemed-gray-200);
+        margin-bottom: 2rem;
+        overflow: hidden;
+    }
+    
+    .section-header {
+        background: var(--onemed-gray-50);
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid var(--onemed-gray-200);
+    }
+    
+    .section-header h2 {
+        font-size: 1.25rem;
+        color: var(--onemed-text);
+        margin-bottom: 0.5rem;
+    }
+    
+    .section-description {
+        color: var(--onemed-gray-600);
+        font-size: 0.95rem;
+    }
+    
+    .table-container {
+        overflow-x: auto;
+    }
+    
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .data-table th {
+        background: var(--onemed-gray-50);
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        color: var(--onemed-gray-700);
+        border-bottom: 1px solid var(--onemed-gray-200);
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .data-table td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--onemed-gray-100);
+        vertical-align: top;
+    }
+    
+    .data-table tr:hover {
+        background: var(--onemed-gray-50);
+    }
+    
+    /* Amount formatting */
+    .amount {
+        font-weight: 600;
+        color: var(--onemed-text);
+        font-family: 'SF Mono', Monaco, monospace;
+    }
+    
+    .amount-large {
+        font-size: 1.1rem;
+        color: var(--onemed-primary);
+    }
+    
+    /* Quality control alerts */
+    .quality-alert {
+        background: rgba(220, 38, 38, 0.05);
+        border: 1px solid rgba(220, 38, 38, 0.2);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .quality-alert.warning {
+        background: rgba(217, 119, 6, 0.05);
+        border-color: rgba(217, 119, 6, 0.2);
+    }
+    
+    .quality-alert.success {
+        background: rgba(5, 150, 105, 0.05);
+        border-color: rgba(5, 150, 105, 0.2);
+    }
+    
+    .alert-icon {
+        font-size: 1.25rem;
+        margin-right: 0.5rem;
+    }
+    
+    .alert-title {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    /* Action buttons */
+    .action-bar {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        padding: 2rem;
+        border-top: 1px solid var(--onemed-gray-200);
+        background: var(--onemed-gray-50);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .results-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .summary-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .section-header {
+            padding: 1rem 1.5rem;
+        }
+        
+        .data-table th,
+        .data-table td {
+            padding: 0.75rem;
+            font-size: 0.9rem;
+        }
+        
+        .action-bar {
+            flex-direction: column;
+            align-items: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="results-header">
+    <h1>📊 Konteringsresultater</h1>
+    <div class="processing-info">
+        Behandlet på <span class="processing-time">{{ processing_time }}s</span>
+    </div>
+</div>
+
+<!-- Summary cards -->
+<div class="summary-grid">
+    <div class="summary-card success">
+        <h3>Totalt Beløp</h3>
+        <div class="summary-value">{{ "%.2f"|format(invoice_data.beløp_sammendrag.totalbeløp) }}</div>
+        <div class="summary-label">{{ invoice_data.beløp_sammendrag.valuta }}</div>
+    </div>
+    
+    <div class="summary-card {% if invoice_data.kvalitetskontroll.unmatched_count > 0 %}warning{% else %}success{% endif %}">
+        <h3>Konterte Ansatte</h3>
+        <div class="summary-value">
+            {{ invoice_data.kostnadsbarer_telia|selectattr('match_status', 'equalto', 'KONTERT')|list|length }}
+            /
+            {{ invoice_data.kostnadsbarer_telia|length }}
+        </div>
+        <div class="summary-label">automatisk kontert</div>
+    </div>
+    
+    {% if invoice_data.kvalitetskontroll.unmatched_count > 0 %}
+    <div class="summary-card error">
+        <h3>Konteringsavvik</h3>
+        <div class="summary-value">{{ invoice_data.kvalitetskontroll.unmatched_count }}</div>
+        <div class="summary-label">krever manuell behandling</div>
+    </div>
+    {% endif %}
+    
+    <div class="summary-card {% if invoice_data.kvalitetskontroll.processing_confidence > 0.9 %}success{% elif invoice_data.kvalitetskontroll.processing_confidence > 0.7 %}warning{% else %}error{% endif %}">
+        <h3>Behandlingskvalitet</h3>
+        <div class="summary-value">{{ "%.0f"|format(invoice_data.kvalitetskontroll.processing_confidence * 100) }}%</div>
+        <div class="summary-label">systemtillit</div>
+    </div>
+</div>
+
+<!-- Quality control alerts -->
+{% if invoice_data.kvalitetskontroll.validation_errors %}
+<div class="data-section">
+    <div class="section-header">
+        <h2>🚨 Kvalitetskontroll</h2>
+        <div class="section-description">Viktige merknader som krever oppmerksomhet</div>
+    </div>
+    
+    <div style="padding: 1.5rem 2rem;">
+        {% for error in invoice_data.kvalitetskontroll.validation_errors %}
+        <div class="quality-alert warning">
+            <div class="alert-title">
+                <span class="alert-icon">⚠️</span>
+                {{ error }}
+            </div>
+        </div>
+        {% endfor %}
+        
+        {% if invoice_data.kvalitetskontroll.requires_manual_review %}
+        <div class="quality-alert error">
+            <div class="alert-title">
+                <span class="alert-icon">👤</span>
+                Manuell gjennomgang påkrevet
+            </div>
+            <p style="margin-top: 0.5rem; color: var(--onemed-gray-600);">
+                Denne fakturaen inneholder konteringsavvik som må håndteres manuelt før godkjenning.
+            </p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Cost bearer matching results -->
+<div class="data-section">
+    <div class="section-header">
+        <h2>👥 Kostnadsbærer-kontering</h2>
+        <div class="section-description">Resultater fra automatisk matching mot kostnadsbærer-registeret</div>
+    </div>
+    
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Navn fra Faktura</th>
+                    <th>Status</th>
+                    <th>Kostsenter</th>
+                    <th>Telefon</th>
+                    <th>Beløp</th>
+                    <th>Merknad</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cb in invoice_data.kostnadsbarer_telia %}
+                <tr>
+                    <td>
+                        <strong>{{ cb.navn_fra_faktura }}</strong>
+                        {% if cb.matched_fornavn and cb.matched_etternavn %}
+                        <br><small style="color: var(--onemed-gray-500);">
+                            Matchet: {{ cb.matched_fornavn }} {{ cb.matched_etternavn }}
+                        </small>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if cb.match_status == 'KONTERT' %}
+                            <span class="status-badge status-kontert">✅ Kontert</span>
+                        {% elif cb.match_status == 'KREVER_MANUELL_KONTERING' %}
+                            <span class="status-badge status-manuell">⚠️ Manuell</span>
+                        {% elif cb.match_status == 'FLERE_MULIGE_TREFF' %}
+                            <span class="status-badge status-flere">❓ Tvetydig</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if cb.kostsenter %}
+                            <strong>{{ cb.kostsenter }}</strong>
+                        {% else %}
+                            <span style="color: var(--onemed-gray-400);">–</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if cb.telefonnummer %}
+                            {{ cb.telefonnummer }}
+                        {% else %}
+                            <span style="color: var(--onemed-gray-400);">–</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="amount">{{ "%.2f"|format(cb.sum_denne_periode) }} NOK</span>
+                    </td>
+                    <td>
+                        {% if cb.deviation_reason %}
+                            <span style="color: var(--onemed-warning);">{{ cb.deviation_reason }}</span>
+                        {% else %}
+                            <span style="color: var(--onemed-gray-400);">–</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Invoice metadata -->
+<div class="data-section">
+    <div class="section-header">
+        <h2>📄 Fakturaopplysninger</h2>
+        <div class="section-description">Uttrukket informasjon fra Telia Norge AS faktura</div>
+    </div>
+    
+    <div style="padding: 1.5rem 2rem;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+            <div>
+                <h4 style="color: var(--onemed-primary); margin-bottom: 1rem;">Leverandør</h4>
+                <p><strong>{{ invoice_data.leverandor.navn }}</strong></p>
+                
+                <h4 style="color: var(--onemed-primary); margin: 1.5rem 0 1rem 0;">Fakturaidentifikasjon</h4>
+                <p><strong>Fakturanummer:</strong> {{ invoice_data.faktura_metadata.fakturanummer }}</p>
+                <p><strong>Fakturadato:</strong> {{ invoice_data.faktura_metadata.fakturadato }}</p>
+                {% if invoice_data.faktura_metadata.periode_fra and invoice_data.faktura_metadata.periode_til %}
+                <p><strong>Periode:</strong> {{ invoice_data.faktura_metadata.periode_fra }} - {{ invoice_data.faktura_metadata.periode_til }}</p>
+                {% endif %}
+            </div>
+            
+            <div>
+                <h4 style="color: var(--onemed-primary); margin-bottom: 1rem;">Beløpssammendrag</h4>
+                <p><strong class="amount amount-large">{{ "%.2f"|format(invoice_data.beløp_sammendrag.totalbeløp) }} {{ invoice_data.beløp_sammendrag.valuta }}</strong></p>
+                
+                <h4 style="color: var(--onemed-primary); margin: 1.5rem 0 1rem 0;">Kvalitetskontroll</h4>
+                <p><strong>Totalbeløp stemmer:</strong> 
+                    {% if invoice_data.kvalitetskontroll.totalbeløp_stemmer %}✅ Ja{% else %}❌ Nei{% endif %}
+                </p>
+                <p><strong>Systemtillit:</strong> {{ "%.1f"|format(invoice_data.kvalitetskontroll.processing_confidence * 100) }}%</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Line details -->
+<div class="data-section">
+    <div class="section-header">
+        <h2>📋 Linjedetaljer</h2>
+        <div class="section-description">Individuelle tjenester fra fakturaen</div>
+    </div>
+    
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Tjeneste</th>
+                    <th>Ansatt</th>
+                    <th>Telefon</th>
+                    <th>Enhetspris</th>
+                    <th>MVA</th>
+                    <th>Linjesum</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for line in invoice_data.linjedetaljer %}
+                <tr>
+                    <td>{{ line.produktnavn }}</td>
+                    <td><strong>{{ line.employee_name }}</strong></td>
+                    <td>{{ line.phone_number }}</td>
+                    <td><span class="amount">{{ "%.2f"|format(line.enhetspris) }}</span></td>
+                    <td>{{ line.mva_kode }}</td>
+                    <td><span class="amount">{{ "%.2f"|format(line.linjesum) }} NOK</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Action buttons -->
+<div class="action-bar">
+    <a href="{{ url_for('index') }}" class="btn btn-primary">
+        📄 Behandle Ny Faktura
+    </a>
+    <button onclick="window.print()" class="btn btn-success">
+        🖨️ Skriv Ut Rapport
+    </button>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Print styling
+    window.addEventListener('beforeprint', function() {
+        document.body.style.background = 'white';
+    });
+    
+    window.addEventListener('afterprint', function() {
+        document.body.style.background = '';
+    });
+</script>
+{% endblock %}
