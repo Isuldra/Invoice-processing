@@ -549,11 +549,53 @@ def process_invoice(pdf_file, excel_file):
                 st.error("❌ Dette ser ikke ut til å være en Telia Norge AS faktura")
                 return
             
+            # ADVANCED DEBUG: Show what's happening with the PDF
+            with st.expander("🔍 OneMed DEBUG - Se hva som skjer med PDF-en", expanded=False):
+                st.markdown("### 📊 PDF Analyse")
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    st.metric("PDF Tekst lengde", f"{len(pdf_content):,} tegn")
+                    contains_telia = "Telia" in pdf_content or "telia" in pdf_content.lower()
+                    st.metric("Inneholder 'Telia'", "✅ JA" if contains_telia else "❌ NEI")
+                
+                with col2:
+                    parser_available = parser is not None
+                    st.metric("TeliaParser tilgjengelig", "✅ JA" if parser_available else "❌ NEI")
+                    if parser_available:
+                        can_parse = parser.can_parse(pdf_content)
+                        st.metric("kan_parse()", "✅ JA" if can_parse else "❌ NEI")
+                    
+                if parser_available:
+                    st.markdown("### 🎯 Pattern Matching Test")
+                    patterns = parser.get_identification_patterns()
+                    import re
+                    matches = 0
+                    for i, pattern in enumerate(patterns, 1):
+                        found = re.search(pattern, pdf_content, re.IGNORECASE)
+                        status = "✅" if found else "❌"
+                        st.write(f"{i}. `{pattern}` → {status}")
+                        if found:
+                            matches += 1
+                    st.write(f"**Totalt: {matches}/5 patterns funnet** (trenger 3+ for parsing)")
+                
+                st.markdown("### 📄 PDF Tekst Sample")
+                st.text_area("Første 500 tegn fra PDF:", pdf_content[:500], height=200)
+
             # Process with parser or create mock data
             if parser and parser.can_parse(pdf_content):
+                st.success("✅ OneMed TeliaParser kan parse denne PDF-en!")
                 result = parser.parse_invoice_with_cost_bearers(pdf_content)
                 display_results(result, is_full_parser=True)
             else:
+                if parser:
+                    st.warning("⚠️ PDF-en passerte ikke TeliaParser validering - bruker demo-data")
+                    if not parser.can_parse(pdf_content):
+                        st.error("📝 **Årsak**: Mindre enn 3 av 5 identifikasjonsmønstre ble funnet")
+                        st.info("💡 **Tips**: Sjekk at PDF-en inneholder 'Fakturanummer:', 'Telia Norge AS', og 'SUM DENNE PERIODE'")
+                else:
+                    st.warning("⚠️ TeliaParser ikke tilgjengelig - bruker demo-data")
+                
                 # Create mock processing results for demo
                 mock_result = create_mock_result(pdf_content, pdf_file.name)
                 display_results(mock_result, is_full_parser=False)
