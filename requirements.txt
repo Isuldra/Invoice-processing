@@ -17,6 +17,7 @@ Werkzeug>=2.3.0
 
 # Streamlit Web GUI - OneMed Fakturabehandling (Anbefalt)
 streamlit>=1.28.0
+PyPDF2>=3.0.0  # Fallback PDF extraction
 
 # Development and testing
 pytest>=7.0.0

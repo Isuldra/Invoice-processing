@@ -21,7 +21,7 @@ serverAddress = "localhost"
 serverPort = 8501
 
 [ui]
-hideTopBar = true  # Skjul Streamlit-menyen for renere utseende
+hideTopBar = false  # Vis Streamlit-menyen
 hideSidebarNav = false  # Vis sidebar-navigasjon
 
 [global]
