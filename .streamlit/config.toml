@@ -3,10 +3,10 @@
 
 [theme]
 base = "light"  # Standard lys modus (kan endres i appen)
-primaryColor = "#2563eb"  # OneMed Medical Blue
-backgroundColor = "#ffffff"  # Clean white background
-secondaryBackgroundColor = "#f8fafc"  # Light gray surfaces
-textColor = "#1e293b"  # Dark text for readability
+primaryColor = "#497886"  # OneMed EKTE bakgrunnsfarge - ikke junior blå
+backgroundColor = "#FAFAFA"  # Profesjonell hvit bakgrunn
+secondaryBackgroundColor = "#FFFFFF"  # Hvite kort/overflater
+textColor = "#212121"  # Profesjonell mørk tekst
 font = "sans serif"  # Clean, professional font
 
 [server]

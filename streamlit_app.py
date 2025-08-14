@@ -25,33 +25,35 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# OneMed Professional Healthcare Color Palette
+# OneMed EKTE Professional Healthcare Color Palette - Sleek & Modern
 ONEMED_COLORS = {
     "light": {
-        "primary": "#2563eb",          # OneMed Medical Blue
-        "primary_dark": "#1e40af",     # Darker Blue
-        "secondary": "#0f766e",        # Teal Green
-        "accent": "#059669",           # Success Green
-        "warning": "#d97706",          # Warning Amber
-        "error": "#dc2626",            # Error Red
-        "background": "#ffffff",       # White
-        "surface": "#f8fafc",          # Light Gray
-        "text": "#1e293b",             # Dark Text
-        "text_secondary": "#64748b",   # Gray Text
-        "border": "#e2e8f0"            # Light Border
+        "primary": "#497886",          # OneMed FAKTISK bakgrunnsfarge
+        "primary_dark": "#3a5f6b",     # Mørkere teal
+        "secondary": "#6b9bb0",        # Lysere teal
+        "accent": "#4CAF50",           # Success Green
+        "warning": "#FF9800",          # Warning Amber
+        "error": "#F44336",            # Error Red
+        "background": "#FAFAFA",       # Ren hvit bakgrunn
+        "surface": "#FFFFFF",          # Hvite kort
+        "text": "#212121",             # Mørk tekst
+        "text_secondary": "#757575",   # Grå tekst
+        "border": "#E0E0E0",           # Lys border
+        "shadow": "rgba(73, 120, 134, 0.1)"  # OneMed shadow
     },
     "dark": {
-        "primary": "#3b82f6",          # Lighter Blue for dark mode
-        "primary_dark": "#2563eb",     # Blue
-        "secondary": "#14b8a6",        # Lighter Teal
-        "accent": "#10b981",           # Lighter Green
-        "warning": "#f59e0b",          # Lighter Amber
-        "error": "#ef4444",            # Lighter Red
-        "background": "#0f172a",       # Dark Background
-        "surface": "#1e293b",          # Dark Surface
-        "text": "#f1f5f9",             # Light Text
-        "text_secondary": "#94a3b8",   # Light Gray Text
-        "border": "#334155"            # Dark Border
+        "primary": "#5a8a98",          # Lysere OneMed for mørk modus
+        "primary_dark": "#497886",     # Original OneMed
+        "secondary": "#7ba8bc",        # Lysere teal
+        "accent": "#66BB6A",           # Lysere grønn
+        "warning": "#FFA726",          # Lysere amber
+        "error": "#EF5350",            # Lysere rød
+        "background": "#121212",       # Material mørk
+        "surface": "#1E1E1E",          # Mørke kort
+        "text": "#FFFFFF",             # Hvit tekst
+        "text_secondary": "#AAAAAA",  # Lys grå tekst
+        "border": "#333333",           # Mørk border
+        "shadow": "rgba(0, 0, 0, 0.3)" # Mørk shadow
     }
 }
 
@@ -60,143 +62,296 @@ if "dark_mode" not in st.session_state:
     st.session_state.dark_mode = False
 
 def apply_onemed_theme():
-    """Apply OneMed colors with light/dark mode support"""
+    """Apply SLEEK OneMed Professional Design - Enterprise Level"""
     theme = "dark" if st.session_state.dark_mode else "light"
     colors = ONEMED_COLORS[theme]
     
     css = f"""
     <style>
-        /* Main App Styling */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        /* ENTERPRISE LEVEL STYLING - OneMed Professional */
         .stApp {{
-            background-color: {colors["background"]};
+            background: {colors["background"]};
             color: {colors["text"]};
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
         }}
         
-        /* OneMed Header */
+        /* OneMed SLEEK Header with Corporate Styling */
         .onemed-header {{
             background: linear-gradient(135deg, {colors["primary"]} 0%, {colors["primary_dark"]} 100%);
-            padding: 2rem;
-            border-radius: 12px;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 3rem 2rem;
+            border-radius: 0;
+            margin: -1rem -2rem 2rem -2rem;
+            position: relative;
+            box-shadow: 0 8px 32px {colors["shadow"]};
+            border-bottom: 3px solid {colors["primary_dark"]};
         }}
         
-        /* Sidebar Styling */
+        .onemed-header::before {{
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)" /></svg>');
+            opacity: 0.1;
+        }}
+        
+        .onemed-logo {{
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }}
+        
+        .onemed-logo h1 {{
+            color: white;
+            margin: 0;
+            font-size: 2.8rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }}
+        
+        .onemed-logo-icon {{
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            backdrop-filter: blur(10px);
+        }}
+        
+        /* Professional Sidebar */
         .css-1d391kg, .css-1cypcdb {{
-            background-color: {colors["surface"]};
+            background: {colors["surface"]};
+            border-right: 1px solid {colors["border"]};
+            backdrop-filter: blur(20px);
         }}
         
-        /* Metrics Cards */
+        /* Enterprise Metrics Cards */
         [data-testid="metric-container"] {{
-            background-color: {colors["surface"]};
+            background: {colors["surface"]};
             border: 1px solid {colors["border"]};
-            border-radius: 10px;
-            padding: 1rem;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px {colors["shadow"]};
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }}
         
-        /* File Uploader */
+        [data-testid="metric-container"]:hover {{
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px {colors["shadow"]};
+        }}
+        
+        [data-testid="metric-container"]::before {{
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, {colors["primary"]}, {colors["secondary"]});
+        }}
+        
+        /* Premium File Uploader */
         [data-testid="stFileUploader"] {{
-            background-color: {colors["surface"]};
+            background: {colors["surface"]};
             border: 2px dashed {colors["border"]};
-            border-radius: 12px;
-            padding: 2rem;
+            border-radius: 20px;
+            padding: 3rem 2rem;
             text-align: center;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }}
+        
+        [data-testid="stFileUploader"]::before {{
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, {colors["primary"]}, {colors["secondary"]});
+            border-radius: 20px;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: -1;
         }}
         
         [data-testid="stFileUploader"]:hover {{
-            border-color: {colors["primary"]};
-            background-color: rgba(37, 99, 235, 0.05);
+            border-color: transparent;
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px {colors["shadow"]};
         }}
         
-        /* Buttons */
+        [data-testid="stFileUploader"]:hover::before {{
+            opacity: 1;
+        }}
+        
+        /* Executive Level Buttons */
         .stButton > button {{
             background: linear-gradient(135deg, {colors["primary"]} 0%, {colors["primary_dark"]} 100%);
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             font-weight: 600;
-            padding: 0.75rem 1.5rem;
-            transition: all 0.3s ease;
-            border: none !important;
+            font-size: 1rem;
+            padding: 1rem 2rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 16px {colors["shadow"]};
+            letter-spacing: 0.02em;
         }}
         
         .stButton > button:hover {{
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 32px {colors["shadow"]};
         }}
         
-        /* Success/Error/Warning Messages */
+        .stButton > button:active {{
+            transform: translateY(-1px);
+        }}
+        
+        /* Corporate Messages */
         .stSuccess {{
-            background-color: rgba(16, 185, 129, 0.1);
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(76, 175, 80, 0.05));
+            border: 1px solid {colors["accent"]};
             border-left: 4px solid {colors["accent"]};
-            border-radius: 8px;
+            border-radius: 12px;
+            backdrop-filter: blur(20px);
         }}
         
         .stError {{
-            background-color: rgba(239, 68, 68, 0.1);
+            background: linear-gradient(135deg, rgba(244, 67, 54, 0.1), rgba(244, 67, 54, 0.05));
+            border: 1px solid {colors["error"]};
             border-left: 4px solid {colors["error"]};
-            border-radius: 8px;
+            border-radius: 12px;
+            backdrop-filter: blur(20px);
         }}
         
         .stWarning {{
-            background-color: rgba(245, 158, 11, 0.1);
+            background: linear-gradient(135deg, rgba(255, 152, 0, 0.1), rgba(255, 152, 0, 0.05));
+            border: 1px solid {colors["warning"]};
             border-left: 4px solid {colors["warning"]};
-            border-radius: 8px;
+            border-radius: 12px;
+            backdrop-filter: blur(20px);
         }}
         
         .stInfo {{
-            background-color: rgba(59, 130, 246, 0.1);
+            background: linear-gradient(135deg, rgba(73, 120, 134, 0.1), rgba(73, 120, 134, 0.05));
+            border: 1px solid {colors["primary"]};
             border-left: 4px solid {colors["primary"]};
-            border-radius: 8px;
-        }}
-        
-        /* Expander */
-        .streamlit-expanderHeader {{
-            background-color: {colors["surface"]};
-            border-radius: 8px;
-            border: 1px solid {colors["border"]};
-        }}
-        
-        /* Custom Containers */
-        .onemed-container {{
-            background-color: {colors["surface"]};
-            border: 1px solid {colors["border"]};
             border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
+            backdrop-filter: blur(20px);
         }}
         
-        /* Text Colors */
-        .text-primary {{ color: {colors["primary"]}; }}
-        .text-secondary {{ color: {colors["text_secondary"]}; }}
-        .text-success {{ color: {colors["accent"]}; }}
-        .text-error {{ color: {colors["error"]}; }}
-        .text-warning {{ color: {colors["warning"]}; }}
-        
-        /* DataFrames */
-        .dataframe {{
-            border-radius: 8px;
+        /* Professional Expanders */
+        .streamlit-expanderHeader {{
+            background: {colors["surface"]};
+            border-radius: 12px;
             border: 1px solid {colors["border"]};
+            box-shadow: 0 2px 8px {colors["shadow"]};
+            transition: all 0.3s ease;
         }}
         
-        /* Hide Streamlit Menu */
+        .streamlit-expanderHeader:hover {{
+            box-shadow: 0 4px 16px {colors["shadow"]};
+        }}
+        
+        /* Executive Containers */
+        .onemed-container {{
+            background: {colors["surface"]};
+            border: 1px solid {colors["border"]};
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 20px {colors["shadow"]};
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }}
+        
+        .onemed-container::before {{
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, {colors["primary"]}, {colors["secondary"]});
+        }}
+        
+        /* Premium Text Styling */
+        .text-primary {{ 
+            color: {colors["primary"]}; 
+            font-weight: 600;
+        }}
+        .text-secondary {{ 
+            color: {colors["text_secondary"]}; 
+            font-weight: 400;
+        }}
+        .text-success {{ 
+            color: {colors["accent"]}; 
+            font-weight: 600;
+        }}
+        .text-error {{ 
+            color: {colors["error"]}; 
+            font-weight: 600;
+        }}
+        .text-warning {{ 
+            color: {colors["warning"]}; 
+            font-weight: 600;
+        }}
+        
+        /* Executive DataFrames */
+        .dataframe {{
+            border-radius: 12px;
+            border: 1px solid {colors["border"]};
+            box-shadow: 0 4px 16px {colors["shadow"]};
+            overflow: hidden;
+        }}
+        
+        /* Professional Typography */
+        h1, h2, h3, h4, h5, h6 {{
+            color: {colors["text"]};
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }}
+        
+        /* Hide Streamlit Branding */
         #MainMenu {{visibility: hidden;}}
         footer {{visibility: hidden;}}
+        header {{visibility: hidden;}}
         
-        /* Custom scrollbar */
+        /* Premium Scrollbar */
         ::-webkit-scrollbar {{
-            width: 8px;
+            width: 12px;
         }}
         
         ::-webkit-scrollbar-track {{
-            background: {colors["surface"]};
+            background: {colors["background"]};
+            border-radius: 6px;
         }}
         
         ::-webkit-scrollbar-thumb {{
-            background: {colors["primary"]};
-            border-radius: 4px;
+            background: linear-gradient(135deg, {colors["primary"]}, {colors["secondary"]});
+            border-radius: 6px;
+            box-shadow: 0 2px 4px {colors["shadow"]};
+        }}
+        
+        ::-webkit-scrollbar-thumb:hover {{
+            background: linear-gradient(135deg, {colors["primary_dark"]}, {colors["primary"]});
         }}
     </style>
     """
@@ -267,13 +422,18 @@ def main():
             else:
                 st.write("**Status:** ⚠️ Begrenset modus")
     
-    # Header with OneMed styling
+    # SLEEK OneMed Header with Corporate Branding
     st.markdown("""
     <div class="onemed-header">
-        <h1 style="color: white; margin: 0; font-size: 2.5rem;">🏥 OneMed Fakturabehandling</h1>
-        <p style="color: rgba(255,255,255,0.9); margin: 0.5rem 0 0 0; font-size: 1.1rem;">
-            Automatisk kontering av Telia Norge AS fakturaer med norsk finansterminologi
-        </p>
+        <div class="onemed-logo">
+            <div class="onemed-logo-icon">🏥</div>
+            <div>
+                <h1>OneMed Fakturabehandling</h1>
+                <p style="color: rgba(255,255,255,0.85); margin: 0; font-size: 1.2rem; font-weight: 300; letter-spacing: 0.02em;">
+                    Enterprise fakturaløsning med automatisk kontering og norsk finansterminologi
+                </p>
+            </div>
+        </div>
     </div>
     """, unsafe_allow_html=True)
     
