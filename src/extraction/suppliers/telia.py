@@ -31,15 +31,15 @@ from .base_supplier import BaseSupplierParser, InvoiceData, InvoiceLine
 
 
 class TeliaParser(BaseSupplierParser):
-    """Text-based parser for Telia invoices."""
+    """Text-based parser for Telia Norge AS invoices."""
     
     def get_supplier_name(self) -> str:
-        return "telia"
+        return "Telia Norge AS"
     
     def get_identification_patterns(self) -> List[str]:
         return [
             r"Telia Norge AS",
-            r"TELIA COMPANY AB",
+            r"TELIA NORGE AS",
             r"Fakturanummer:",
             r"Tjenestespesifikasjon for",
             r"SUM DENNE PERIODE"
@@ -57,7 +57,7 @@ class TeliaParser(BaseSupplierParser):
         self.logger.info("Parsing Telia invoice")
         
         # Extract basic invoice info
-        invoice_data = InvoiceData(supplier="TELIA COMPANY AB")
+        invoice_data = InvoiceData(supplier="Telia Norge AS")
         
         # Extract invoice number
         invoice_match = re.search(r'Fakturanummer:\s*(\d+)', pdf_content)
