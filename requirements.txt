@@ -1,0 +1,31 @@
+# PDF Processing Libraries
+pypdf>=3.0.0
+pdfplumber>=0.9.0
+
+# Data Processing
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Excel Processing - Multiple engines for optimization
+openpyxl>=3.1.0
+calamine>=0.1.7
+pyxlsb>=1.0.10
+
+# Configuration Management with LibYAML optimization
+PyYAML>=6.0
+pyyaml[libyaml]>=6.0
+
+# Performance and utilities
+python-dateutil>=2.8.0
+regex>=2022.1.18  # More performant than re for complex patterns
+fuzzywuzzy>=0.18.0  # For enhanced name matching
+python-Levenshtein>=0.20.0  # C extension for faster string matching
+rapidfuzz>=2.0.0  # Even faster fuzzy matching
+
+# Optional: Progress bars and logging
+tqdm>=4.64.0
+rich>=13.0.0
+
+# Development and testing
+pytest>=7.0.0
+pytest-benchmark>=4.0.0

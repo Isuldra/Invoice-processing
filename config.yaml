@@ -1,0 +1,84 @@
+# Optimized Invoice Processing Configuration
+pdf_extraction:
+  # pypdf optimization settings
+  pypdf:
+    extraction_mode: "layout"  # New layout-preserving mode
+    use_visitor_functions: true
+    fallback_to_plain: true
+    
+  # pdfplumber optimization settings
+  pdfplumber:
+    use_repair: true
+    repair_strategy: "fix_missing_endstream"  # Handle corrupted PDFs
+    debug_visual: false  # Set to true for troubleshooting
+    table_settings:
+      vertical_strategy: "lines"
+      horizontal_strategy: "lines"
+      min_words_vertical: 3
+      min_words_horizontal: 1
+
+# Excel Processing Optimization
+excel_processing:
+  # Engine selection based on file type and size
+  engines:
+    xlsx_small: "openpyxl"      # Best for files < 10MB
+    xlsx_large: "calamine"      # Rust-based, fastest for large files
+    xlsb: "pyxlsb"             # Binary Excel format
+    xls: "xlrd"                # Legacy format
+  
+  # Chunked reading for large files
+  chunk_size: 10000  # Rows per chunk
+  memory_threshold_mb: 500  # Switch to chunked reading above this size
+  
+  # Performance settings
+  dtype_optimization: true  # Auto-detect optimal dtypes
+  use_nullable_dtypes: true  # Better memory efficiency
+
+# Name Matching Configuration
+name_matching:
+  # Algorithm selection (rapidfuzz is fastest)
+  algorithm: "rapidfuzz"  # Options: fuzzywuzzy, rapidfuzz, levenshtein
+  threshold: 85  # Matching threshold (0-100)
+  preprocessing:
+    normalize_case: true
+    remove_titles: ["mr", "mrs", "ms", "dr", "prof"]
+    remove_suffixes: ["jr", "sr", "iii", "iv"]
+  
+  # Performance optimization
+  use_process_pool: true
+  max_workers: 4
+
+# Telia Invoice Patterns (Enhanced)
+telia_patterns:
+  invoice_number:
+    pattern: "(?:Invoice|Faktura)\\s*(?:Number|Nr\\.?)\\s*[:]*\\s*([A-Z]{3}\\d{10})"
+    flags: ["IGNORECASE", "MULTILINE"]
+    
+  invoice_date:
+    patterns:  # Multiple patterns for robustness
+      - "(?:Invoice Date|Fakturadatum)\\s*[:]*\\s*(\\d{1,2}[./-]\\d{1,2}[./-]\\d{4})"
+      - "(?:Date)\\s*[:]*\\s*(\\d{4}-\\d{1,2}-\\d{1,2})"
+    flags: ["IGNORECASE", "MULTILINE"]
+    
+  total_amount:
+    pattern: "(?:Total|Totalt|Sum)\\s*[:]*\\s*([\\d,]+\\.\\d{2})\\s*(?:SEK|kr)"
+    flags: ["IGNORECASE", "MULTILINE"]
+    
+  employee_names:
+    # Enhanced pattern for Swedish names
+    pattern: "([A-ZÅÄÖ][a-zåäö]+(?:\\s+[A-ZÅÄÖ][a-zåäö]+){1,3})(?=\\s*\\d+\\.\\d+|\\s*kr|\\s*SEK)"
+    flags: ["UNICODE", "MULTILINE"]
+
+# Logging Configuration
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "invoice_processing.log"
+  max_bytes: 10485760  # 10MB
+  backup_count: 5
+
+# Performance Monitoring
+performance:
+  enable_benchmarking: true
+  profile_memory_usage: true
+  track_processing_times: true
